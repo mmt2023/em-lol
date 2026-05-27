@@ -1,0 +1,2445 @@
+<!DOCTYPE html>
+<!-- =============================================
+     LEAGUE OF LEGENDS WIKI
+     Proyecto web de Miguel y Erik
+     Estructura: HTML + CSS (en <style>) + JS (al final)
+============================================= -->
+<html lang="es">
+
+<!-- ===== LOGO Y TÍTULO (aparece arriba del todo, fuera del <head>) ===== -->
+<header class="main-header">
+  <div class="header-content">
+
+  </div>
+</header>
+
+
+<!-- ===== BLOQUE DE ESTILOS CSS ===== -->
+  <style>
+    /* ===== RESET & VARIABLES ===== */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --gold: #c89b3c;
+      --gold-light: #c8aa6e;
+      --dark: #0a1428;
+      --dark2: #0b1426;
+      --cream: #f0e6d2;
+      --radius: 14px;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: url("img/fondo.jpg") no-repeat center center fixed;
+      background-size: cover;
+      color: #111;
+      line-height: 1.6;
+    }
+
+    /* ===== HEADER ===== */
+    header {
+      position: fixed;   /* Siempre visible aunque se haga scroll */
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 999;
+      background: linear-gradient(rgba(0,0,0,0.80), rgba(0,0,0,0.80));
+      color: white;
+      padding: 18px 20px;
+      border-bottom: 2px solid rgba(200,155,60,0.35);
+      backdrop-filter: blur(6px);
+    }
+
+    .header-content {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 10px 20px;
+    }
+
+    .logo-btn {
+      width: 50px;
+      height: auto;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    .logo-btn:hover {
+      transform: scale(1.1);
+      filter: brightness(1.2);
+    }
+
+    .topbar {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    header h1 {
+      font-size: 1.35rem;
+      letter-spacing: 1px;
+      font-weight: 900;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    /* ===== NAV ===== */
+    nav { display: flex; gap: 12px; align-items: center; }
+
+    .nav-btn {
+      border: 1px solid rgba(255,255,255,0.2);
+      background: rgba(0,0,0,0.35);
+      color: white;
+      padding: 10px 12px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 700;
+      transition: 0.2s ease;
+    }
+
+    .nav-btn:hover { transform: translateY(-1px); border-color: rgba(200,155,60,0.8); }
+    .nav-btn.active { background: rgba(200,155,60,0.15); border-color: var(--gold); }
+
+    /* ===== MAIN ===== */
+    main {
+      max-width: 1100px;
+      margin: 90px auto 50px auto; /* margen superior para no quedar tapado por el header fijo */
+      background-color: rgba(255,255,255,0.92);
+      padding: 26px;
+      border-radius: var(--radius);
+      box-shadow: 0 14px 50px rgba(0,0,0,0.25);
+    }
+
+    /* Quitar fondo blanco en secciones oscuras */
+    body:has(#sostenibilidad.active) main,
+    body:has(#historia.active) main,
+    body:has(#personajes.active) main,
+    body:has(#objetos.active) main,
+    body:has(#runas.active) main,
+    body:has(#minijuego.active) main {
+      background: transparent;
+      box-shadow: none;
+      border: none;
+    }
+
+    /* ===== SECCIONES ===== */
+    .section { display: none; animation: fadeIn 0.2s ease; }
+    .section.active { display: block; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    h2 {
+      border-bottom: 3px solid var(--gold);
+      padding-bottom: 8px;
+      margin-bottom: 20px;
+      font-size: 1.8rem;
+      color: #585757;
+    }
+
+    p { font-size: 1.05rem; margin-bottom: 15px; }
+
+    /* ===== BOTÓN GENÉRICO ===== */
+    .btn {
+      display: inline-block;
+      padding: 10px 14px;
+      background: var(--gold);
+      color: #000;
+      text-decoration: none;
+      font-weight: 900;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+    .btn:hover { background: #e6c36a; transform: translateY(-1px); }
+
+    /* ===== GRIDS GENÉRICOS ===== */
+    .grid-2 { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 22px; align-items: center; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 18px; }
+
+    @media (max-width: 900px) {
+      .grid-2, .grid-3 { grid-template-columns: 1fr; }
+      header h1 { font-size: 1.05rem; }
+      nav { flex-wrap: wrap; justify-content: flex-end; }
+    }
+
+    /* ===== BUSCADOR ===== */
+    .search-bar {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 20px;
+      border-radius: 12px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+    }
+
+    /* ===== HISTORIA ===== */
+/* Solo aplicamos el recuadro cuando la sección esté ACTIVA */
+#historia.active {
+  display: block !important; /* Solo se muestra si tiene la clase active */
+  background: rgba(10, 20, 40, 0.95) !important;
+  border: 2px solid var(--gold);
+  border-radius: 20px;
+  max-width: 1200px;
+  margin: 60px auto !important;
+  padding: 40px;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
+  z-index: 10; /* Para asegurar que esté por encima del fondo */
+  position: relative;
+}
+
+/* Cuando NO está activa, debe estar oculta */
+#historia:not(.active) {
+  display: none !important;
+}
+
+/* Ajustes internos para que no se rompa nada */
+.contenedor-historias-top {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 25px;
+  margin-bottom: 30px;
+}
+/* --- ESTILO PARA LA IMAGEN ÚNICA CENTRADA EN REGIONES --- */
+/* --- AJUSTE DEL RECUADRO PARA QUE SEA MÁS ESTRECHO --- */
+
+.modal-content {
+  /* Antes tenías 1100px o 85%, ahora lo bajamos */
+  width: 95% !important;
+  max-width: 600px !important; /* Este es el ancho total del recuadro negro */
+
+  margin: 50px auto !important; /* Lo centra en la pantalla */
+  padding: 30px !important;
+  background: linear-gradient(145deg, #0a1428, #111) !important;
+  border: 2px solid var(--gold) !important;
+  border-radius: 20px;
+  text-align: center;
+}
+
+/* Ajustamos el tamaño de la imagen dentro de este nuevo recuadro */
+.modal-slider img {
+  width: 100% !important; /* Ahora que el recuadro es pequeño, que la foto ocupe su ancho */
+  max-width: 450px !important;
+  height: auto;
+  margin: 10px auto;
+  border-radius: 10px;
+}
+
+/* Para que el texto no se pegue a los bordes */
+.modal-content p {
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #d4c8a8;
+  margin-bottom: 20px;
+}
+/* 1. Contenedor de las imágenes dentro del modal */
+.modal-slider {
+  display: flex !important;
+  justify-content: center !important; /* Centra la imagen horizontalmente */
+  align-items: center;
+  gap: 0 !important;
+  margin: 30px 0;
+  width: 100%;
+}
+
+/* 2. Estilo de la imagen que queda */
+.modal-slider img {
+  width: 80% !important; /* Ocupa el 80% del ancho del recuadro azul */
+  max-width: 500px !important; /* Para que no sea gigante en monitores grandes */
+  height: auto !important;
+  border: 2px solid var(--gold) !important;
+  border-radius: 15px;
+  object-fit: cover;
+}
+
+/* 3. OCULTAR la segunda y tercera imagen (Paso clave) */
+.modal-slider img:nth-child(n+2) {
+  display: none !important;
+}
+.regiones-grid-fija {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 15px;
+  padding: 20px 0;
+}
+    .contenedor-historias-top {
+      display: grid;
+      grid-template-columns: 1fr 1fr; /* Dos columnas para los 2 de arriba */
+      gap: 25px;
+      padding: 20px;
+      margin-bottom: 40px;
+    }
+
+    .bloque-historia {
+      background: rgba(5, 15, 30, 0.6); /* Fondo azul muy oscuro para integrarse */
+      border: 2px solid var(--gold);
+      border-radius: 15px;
+      padding: 25px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      transition: 0.3s;
+    }
+
+    .bloque-historia:hover { transform: translateY(-5px); box-shadow: 0 0 20px rgba(200,155,60,0.2); }
+
+    .bloque-historia .texto h2 { color: var(--gold); border: none; font-size: 1.6rem; margin-bottom: 15px; }
+    .bloque-historia .texto p { font-size: 0.95rem; color: #ccc; }
+
+    .bloque-historia .imagen img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 10px;
+      margin-top: 15px;
+      border: 1px solid rgba(200,155,60,0.3);
+    }
+
+
+    /* --- CUADRÍCULA DE REGIONES (5x2) --- */
+    .regiones-grid-fija {
+      display: grid;
+      /* Aquí forzamos las 5 columnas */
+      grid-template-columns: repeat(5, 1fr);
+      gap: 15px;
+      padding: 20px;
+      margin: 0 5%;
+    }
+
+    .region-card {
+      position: relative;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 2px solid rgba(200,155,60,0.5);
+      height: 180px; /* Un poco más bajitos para que quepan bien los 5 */
+      transition: 0.4s;
+      cursor: pointer;
+    }
+
+    .region-card:hover {
+      border-color: var(--gold);
+      transform: scale(1.05);
+      z-index: 2;
+    }
+
+    .region-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: brightness(0.6);
+      transition: 0.4s;
+    }
+
+    .region-card:hover img {
+      filter: brightness(0.9);
+    }
+
+    .region-card h3 {
+      position: absolute;
+      bottom: 10px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      color: white;
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.9);
+    }
+
+    /* Opcional: Si lo ves en el móvil, que se ponga en 2 columnas para que no explote */
+    @media (max-width: 900px) {
+      .regiones-grid-fija {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .contenedor-historias-top {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* ===== PERSONAJES ===== */
+    #personajes {
+      background: radial-gradient(circle at top, #162447 0%, #0b1426 40%, #050914 100%);
+      color: var(--cream);
+      border: 5px solid var(--gold-light);
+      border-radius: 25px;
+      padding: 20px;
+      padding-top: 1px;
+      margin: 60px auto;
+      max-width: 1100px;
+      box-shadow: 0 0 30px rgba(200,170,110,0.3);
+    }
+
+    #personajes h2 { color: #f0d17a; border-bottom-color: rgba(200,170,80,0.4); margin-bottom: 15px; }
+
+    .champ-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px,1fr));
+      gap: 18px;
+    }
+
+    .champ-card {
+      background: linear-gradient(160deg, #1a2a44, #0e1a2e);
+      border: 2px solid #4a3a1e;
+      border-radius: 14px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+      will-change: transform;
+    }
+
+    .champ-card:hover { transform: translateY(-5px); border-color: var(--gold-light); box-shadow: 0 0 16px rgba(200,170,80,0.4); }
+    .champ-card img { width: 100%; height: 160px; object-fit: cover; }
+    .champ-name { padding: 10px; font-weight: 900; text-align: center; background: linear-gradient(135deg, #a07830, #c8aa6e); color: #0a1428; }
+
+    #personajes .search-bar,
+    #objetos .search-bar {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(200,170,80,0.35);
+      color: var(--cream);
+    }
+
+    #personajes .search-bar::placeholder,
+    #objetos .search-bar::placeholder { color: rgba(240,230,210,0.45); }
+
+    /* ===== OBJETOS ===== */
+    #objetos {
+      background: radial-gradient(circle at top, #162447 0%, #0b1426 40%, #050914 100%);
+      color: var(--cream);
+      border: 5px solid var(--gold-light);
+      border-radius: 25px;
+      padding: 20px;
+      margin: 60px auto;
+      max-width: 1100px;
+      box-shadow: 0 0 30px rgba(200,170,110,0.3);
+    }
+
+    #objetos h2 { color: #f0d17a; border-bottom-color: rgba(200,170,80,0.4); }
+
+    .obj-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(110px,1fr));
+      gap: 14px;
+    }
+
+    .obj-card {
+      background: linear-gradient(160deg, #1a2a44, #0e1a2e);
+      border: 2px solid #4a3a1e;
+      border-radius: 10px;
+      padding: 10px 6px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+      position: relative;
+      overflow: visible; /* necesario para que el tooltip no quede recortado */
+    }
+
+    .obj-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at top center, rgba(200,170,80,0.08), transparent 70%);
+      pointer-events: none;
+      border-radius: 10px; /* mantiene el efecto visual recortado a la tarjeta */
+    }
+
+    .obj-card:hover { transform: translateY(-4px) scale(1.04); border-color: var(--gold-light); box-shadow: 0 0 16px rgba(200,170,80,0.45); }
+    .obj-card img { width: 110px; height: 110px; object-fit: contain; border-radius: 6px; border: 1px solid rgba(200,170,80,0.3); background: rgba(0,0,0,0.35); padding: 4px; margin-bottom: 8px; }
+    .obj-name { font-size: 0.8rem; font-weight: 700; color: var(--gold-light); text-align: center; line-height: 1.25; word-break: break-word; }
+
+    /* Tooltip de objeto (aparece al hacer hover, sin necesidad de clic) */
+    .obj-tooltip {
+      display: none;
+      position: absolute;
+      bottom: calc(100% + 8px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(160deg, #0e1a2e, #162540);
+      border: 1px solid var(--gold-light);
+      border-radius: 10px;
+      padding: 10px 12px;
+      width: 220px;
+      color: #d4c8a8;
+      font-size: 0.88rem;
+      line-height: 1.5;
+      z-index: 100;
+      pointer-events: none;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.6);
+    }
+    .obj-tooltip::after {
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 6px solid transparent;
+      border-top-color: var(--gold-light);
+    }
+    .obj-card:hover .obj-tooltip { display: block; }
+
+    #modalObjImg { width: 120px; height: 120px; object-fit: contain; margin: 20px auto; display: block; border-radius: 8px; border: 2px solid var(--gold-light); }
+
+    #modalObjetos .modal-content {
+      background: linear-gradient(160deg, #0e1a2e, #162540);
+      border: 2px solid var(--gold-light);
+      border-radius: 18px;
+      color: var(--cream);
+      max-width: 420px;
+      text-align: center;
+      padding: 28px 24px;
+    }
+
+    #modalObjetos .modal-content h2 { color: #f0d17a; border-bottom: 2px solid rgba(200,170,80,0.35); padding-bottom: 8px; margin-bottom: 0; }
+    #modalObjetos .modal-content p { color: #d4c8a8; font-size: 0.97rem; margin-top: 8px; }
+    #modalObjetos .modal-close { color: var(--gold-light); font-size: 1.4rem; }
+
+    /* ===== RUNAS ===== */
+    #runas {
+      background: linear-gradient(145deg, #0b1f35, #091525);
+      color: var(--cream);
+      padding: 50px;
+      text-align: center;
+      font-family: "Verdana", sans-serif;
+      margin: 60px auto;
+      max-width: 1200px;
+      border-radius: 20px;
+      box-shadow: 0 0 40px rgba(0,0,0,0.6);
+      border: 2px solid gold;
+    }
+
+    #runas h2 { font-size: 36px; margin-bottom: 40px; color: var(--cream); text-shadow: 0 0 6px rgba(0,0,0,0.7); border: none; }
+
+    .runas-grid { display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; }
+
+    .runa-tree {
+      background: #091428;
+      border: 2px solid var(--gold);
+      border-radius: 14px;
+      padding: 20px;
+      width: 160px;
+      transition: 0.25s;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .runa-tree img { width: 100px; margin-bottom: 10px; }
+    .runa-tree p { margin: 0; font-size: 16px; color: var(--cream); text-align: center; }
+    .runa-tree:hover { transform: scale(1.1); box-shadow: 0 0 18px var(--gold); }
+
+    /* ===== MINIJUEGO ===== */
+    #minijuego {
+      background: rgba(20,20,20,0.7);
+      backdrop-filter: blur(10px);
+      border: 2px solid var(--gold-light);
+      border-radius: 25px;
+      padding: 40px;
+      max-width: 900px;
+      margin: 40px auto;
+      color: white;
+      box-shadow: 0 0 30px rgba(0,0,0,0.5);
+      position: relative;
+      overflow: hidden;
+    }
+
+    #minijuego::before {
+      content: "";
+      position: absolute;
+      top: -100px; right: -100px;
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, rgba(200,155,60,0.25), transparent 50%);
+      z-index: 0;
+    }
+
+    #minijuego * { position: relative; z-index: 1; }
+    #minijuego h2 { color: var(--gold-light); text-transform: uppercase; letter-spacing: 2px; border-bottom: 2px solid var(--gold-light); padding-bottom: 10px; margin-bottom: 30px; }
+
+    .resultado-ruleta {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(200,170,110,0.3);
+      border-radius: 10px;
+      padding: 20px;
+      margin-top: 20px;
+    }
+
+    .resultado-ruleta img { max-width: 100%; height: 250px; object-fit: cover; border: 1px solid var(--gold-light); margin-bottom: 15px; display: block; }
+    .resultado-ruleta h3 { color: var(--cream); font-size: 1.5rem; margin: 0; }
+
+    .btn-girar {
+      background: linear-gradient(to bottom, #c8aa6e, #7a5c29);
+      border: 1px solid #5b4a1f;
+      color: white;
+      font-weight: bold;
+      padding: 12px 30px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-shadow: 1px 1px 2px black;
+    }
+
+    .btn-girar:hover { filter: brightness(1.2); transform: scale(1.05); box-shadow: 0 0 15px var(--gold-light); }
+
+    /* ===== QUIZ ===== */
+    #quizContainer {
+      background: linear-gradient(135deg, #0a1428, #1e2f55);
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 25px rgba(0,0,0,0.5);
+      max-width: 650px;
+      margin: auto;
+      color: var(--cream);
+    }
+
+    #quizCard {
+      background: linear-gradient(145deg, #0f1c2e, #162a45);
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+      max-width: 600px;
+      margin: auto;
+      color: white;
+    }
+
+    #currentChampion img { border: 3px solid var(--gold); box-shadow: 0 0 15px rgba(200,155,60,0.7); }
+    #questionTitle { font-size: 20px; margin-bottom: 15px; color: white; text-shadow: 0 0 6px rgba(0,0,0,0.8); }
+    #score { font-size: 18px; color: #f5d27a; }
+
+    #answers button {
+      display: block;
+      width: 80%;
+      margin: 8px auto;
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      background: #1e2f55;
+      color: var(--cream);
+      transition: all 0.2s;
+    }
+
+    #answers button:hover { background: #2f4c8a; transform: scale(1.03); }
+    .correct { background-color: #4CAF50 !important; color: white !important; }
+    .wrong   { background-color: #F44336 !important; color: white !important; }
+
+    #resultadoFinal { display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    #resultadoText  { font-size: 28px; color: #f5d27a; text-shadow: 0 0 8px rgba(0,0,0,0.7); }
+    #resultadoImg   { width: 200px; border-radius: 12px; box-shadow: 0 0 25px rgba(0,0,0,0.6); animation: popIn 0.5s ease forwards; }
+    #resultadoImg:hover { transform: scale(1.05); }
+
+    @keyframes popIn {
+      0%   { transform: scale(0); opacity: 0; }
+      80%  { transform: scale(1.1); opacity: 1; }
+      100% { transform: scale(1); }
+    }
+
+    /* ===== MODALES ===== */
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.9);
+      backdrop-filter: blur(10px);
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+
+    .modal-content {
+      width: 85%;
+      max-width: 1100px;
+      margin: 60px auto;
+      background: linear-gradient(145deg, #111, #1a1a1a);
+      padding: 50px;
+      border-radius: 25px;
+      color: white;
+      position: relative;
+      box-shadow: 0 0 60px rgba(0,0,0,0.9);
+    }
+
+    .modal-content h2 { color: var(--gold); font-size: 38px; margin-bottom: 25px; border: none; }
+    .modal-content img { width: 100%; border-radius: 12px; margin-bottom: 15px; }
+    .cerrar, .modal-close { position: absolute; right: 30px; top: 20px; font-size: 35px; cursor: pointer; }
+
+    .modal-slider { display: flex; gap: 20px; margin: 30px 0; }
+    .modal-slider img { width: 33%; border-radius: 15px; transition: 0.4s; }
+    .modal-slider img:hover { transform: scale(1.05); }
+
+    @keyframes zoomIn {
+      from { transform: scale(0.85); opacity: 0; }
+      to   { transform: scale(1); opacity: 1; }
+    }
+
+    /* Modal personajes */
+    .champ-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .champ-modal-content {
+      background: #0a1428;
+      padding: 30px;
+      border-radius: 14px;
+      width: 420px;
+      max-width: 90%;
+      text-align: center;
+      color: var(--cream);
+      position: relative;
+      animation: champFade 0.1s ease-in-out;
+    }
+
+    .champ-modal-content img { width: 365px; border-radius: 12px; margin-bottom: 15px; }
+    .champ-close { position: absolute; top: 10px; right: 15px; cursor: pointer; font-size: 18px; }
+
+    @keyframes champFade {
+      from { opacity: 0; transform: scale(0.9); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+
+    /* Modal runas */
+    .modalRunas {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(5,10,20,0.45); /* reducido al ~50% de opacidad */
+      backdrop-filter: blur(3px);
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+
+    .modal-contenido {
+      background: linear-gradient(145deg, #0c1a2b, #14263f);
+      padding: 40px;
+      border-radius: 18px;
+      width: 85%;
+      max-width: 1000px;
+      text-align: center;
+      box-shadow: 0 0 40px rgba(0,0,0,0.8), 0 0 15px rgba(212,175,55,0.4);
+      animation: zoomIn 0.3s ease;
+      border: 1px solid rgba(212,175,55,0.3);
+    }
+
+    .modal-contenido h3 { color: #d4af37; font-size: 32px; margin-bottom: 30px; letter-spacing: 2px; }
+    .modal-body { display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; }
+
+    .runa-item {
+      background: linear-gradient(160deg, #1a2d47, #122136);
+      padding: 20px;
+      border-radius: 14px;
+      width: 190px;
+      transition: all 0.3s ease;
+      position: relative;
+      cursor: pointer;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .runa-item:hover { transform: translateY(-8px) scale(1.05); box-shadow: 0 0 20px rgba(212,175,55,0.5); }
+    .runa-item img { width: 90px; margin-bottom: 12px; filter: drop-shadow(0 0 8px rgba(212,175,55,0.4)); }
+    .runa-item p { color: #fff; font-weight: bold; font-size: 16px; }
+
+    .tooltipTexto {
+      opacity: 0;
+      position: absolute;
+      bottom: -90px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #0a0f18;
+      color: #d4af37;
+      padding: 10px;
+      border-radius: 8px;
+      width: 200px;
+      font-size: 13px;
+      transition: 0.3s;
+      border: 1px solid rgba(212,175,55,0.3);
+    }
+
+    .runa-item:hover .tooltipTexto { opacity: 1; }
+
+    .cerrarRunas { position: absolute; right: 20px; top: 15px; font-size: 28px; color: #d4af37; cursor: pointer; transition: 0.3s; }
+    .cerrarRunas:hover { transform: rotate(90deg); }
+
+    .cancelar-btn {
+      margin-left: 10px;
+      padding: 10px 15px;
+      background: #8b0000;
+      border: 2px solid gold;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .cancelar-btn:hover { background: #b22222; transform: scale(1.05); }
+
+    /* ===== SOSTENIBILIDAD ===== */
+    #sostenibilidad {
+      background: radial-gradient(circle at top, #0a1428, #000814);
+      color: var(--cream);
+      text-align: center;
+      margin: 60px auto;
+      max-width: 1300px;
+      padding: 60px 40px;
+      border-radius: 25px;
+      border: 4px solid var(--gold-light);
+      box-shadow: 0 0 30px rgba(200,170,110,0.3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    #sostenibilidad::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at top right, rgba(200,170,110,0.15), transparent 50%);
+      pointer-events: none;
+    }
+
+    .sost-hero { padding: 60px 20px; border-bottom: 2px solid var(--gold); }
+    .sost-hero h2 { font-size: 42px; color: var(--gold); text-shadow: 0 0 15px rgba(200,155,60,0.6); border: none; }
+
+    .sost-hero-inner { display: grid; grid-template-columns: 1fr auto; gap: 40px; align-items: center; max-width: 1000px; margin: 0 auto; }
+    .sost-hero-texto { text-align: left; }
+    .sost-hero-texto p { color: #d4c8a8; font-size: 1.05rem; line-height: 1.7; margin-bottom: 14px; }
+    .sost-quote { font-style: italic; color: var(--gold) !important; border-left: 3px solid var(--gold); padding-left: 14px; font-size: 0.97rem !important; }
+    .sost-hero-img img { width: 220px; border-radius: 16px; border: 3px solid rgba(200,155,60,0.5); box-shadow: 0 0 30px rgba(200,155,60,0.3); display: block; }
+
+    .sost-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 20px; padding: 40px 5%; }
+
+    .sost-card {
+      background: rgba(20,20,20,0.75);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(200,170,110,0.4);
+      border-radius: 18px;
+      padding: 30px;
+      transition: 0.3s;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+    }
+
+    .sost-card h3 { color: var(--gold-light); margin-bottom: 15px; font-size: 1.1rem; }
+    .sost-card p  { color: #d4c8a8; font-size: 0.95rem; line-height: 1.65; margin-bottom: 10px; }
+    .sost-card:hover { transform: translateY(-8px); box-shadow: 0 0 25px rgba(200,170,110,0.6); }
+
+    .sost-final { padding: 40px; font-size: 20px; color: #e6c36a; }
+
+    @media (max-width: 700px) {
+      .sost-hero-inner { grid-template-columns: 1fr; text-align: center; }
+      .sost-hero-img img { width: 160px; margin: 0 auto; }
+      .sost-quote { border-left: none; padding-left: 0; }
+      .sost-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ===== LIGHTBOX ===== */
+    .lightbox {
+      display: none;
+      position: fixed;
+      z-index: 20000;
+      inset: 0;
+      background: rgba(0,0,0,0.9);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .lightbox-content { max-width: 200%; max-height: 200%; border: 1px solid var(--gold-light); box-shadow: 0 0 30px rgba(200,170,110,0.5); }
+    .lightbox-prev, .lightbox-next { cursor: pointer; position: absolute; top: 50%; padding: 16px; margin-top: -50px; color: var(--gold-light); font-weight: bold; font-size: 40px; transition: 0.3s; user-select: none; }
+    .lightbox-prev { left: 50px; }
+    .lightbox-next { right: 50px; }
+    .lightbox-prev:hover, .lightbox-next:hover { color: white; transform: scale(1.2); }
+    .lightbox-close { position: absolute; top: 30px; right: 50px; color: var(--cream); font-size: 50px; cursor: pointer; }
+  </style>
+</head>
+
+<!-- ===== BARRA DE PROGRESO DE SCROLL (se rellena al hacer scroll) ===== -->
+<div id="barraProgreso">
+    <div id="progreso"></div>
+</div>
+
+<body>
+
+<!-- ===== CABECERA FIJA CON NAVEGACIÓN ===== -->
+<header>
+
+  <!-- Barra superior: contiene los botones de navegación entre secciones -->
+  <div class="topbar">
+
+
+    <nav>
+     <nav class="navbar">
+     <img src="img/logo_lol.png" id="logoInicio" alt="Logo LoL" class="logo-btn">
+
+    <h1>LEAGUE OF LEGENDS WIKI</h1>
+  <button class="nav-btn" data-seccion="historia">Historia</button>
+  <button class="nav-btn" data-seccion="personajes">Personajes</button>
+  <button class="nav-btn" data-seccion="objetos">Objetos</button>
+  <button class="nav-btn" data-seccion="runas">Runas</button>
+  <button class="nav-btn" data-seccion="minijuego">Minijuego</button>
+  <button class="nav-btn" data-seccion="sostenibilidad">Sostenibilidad</button>
+</nav>
+    </nav>
+  </div>
+</header>
+
+<!-- ===== CONTENEDOR PRINCIPAL (todas las secciones van aquí dentro) ===== -->
+<main>
+
+  <!-- ===== SECCIÓN: HISTORIA ===== -->
+  <section class="section active" id="historia">
+
+  <div class="contenedor-historias-top">
+    <div class="bloque-historia">
+      <div class="texto">
+        <h2>Historia de LoL</h2>
+        <p>League of Legends es un videojuego multijugador de arena de batalla en línea desarrollado y publicado por Riot Games. Desde su lanzamiento en octubre de 2009, LoL ha sido un juego gratuito y se monetiza a través de la compra de elementos para la personalización de personajes y otros accesorios.</p>
+      </div>
+      <div class="imagen">
+        <img src="img/runaterra.jpg" alt="Historia">
+      </div>
+    </div>
+
+    <div class="bloque-historia">
+      <div class="texto">
+        <h2>Runaterra</h2>
+        <p>Runaterra es el mundo ficticio y el planeta esférico principal donde se desarrolla el universo de League of Legends. Es un mundo mágico, rico en lore, compuesto por reinos materiales y espirituales, habitado por diversas razas , artefactos destructivos responsables de gran parte de la historia.</p>
+      </div>
+      <div class="imagen">
+        <img src="img/historia.jpg" alt="Lore">
+      </div>
+    </div>
+  </div>
+
+  <h2 style="text-align: center; color: var(--gold); border: none; font-size: 2.5rem; margin: 40px 0;">Regiones Runaterra</h2>
+
+  <div class="regiones-grid-fija">
+    <div class="region-card" data-region="freljord">
+      <img src="img/imagenes regiones portada/Freljord.png">
+      <h3>Freljord</h3>
+    </div>
+    <div class="region-card" data-region="demacia">
+      <img src="img/imagenes regiones portada/Demacia.png">
+      <h3>Demacia</h3>
+    </div>
+    <div class="region-card" data-region="noxus">
+      <img src="img/imagenes regiones portada/Noxus.png">
+      <h3>Noxus</h3>
+    </div>
+    <div class="region-card" data-region="jonia">
+      <img src="img/imagenes regiones portada/Jonia.png">
+      <h3>Jonia</h3>
+    </div>
+    <div class="region-card" data-region="piltover">
+      <img src="img/imagenes regiones portada/Piltover.png">
+      <h3>Piltover</h3>
+    </div>
+    <div class="region-card" data-region="zaun">
+      <img src="img/imagenes regiones portada/Zaun.png">
+      <h3>Zaun</h3>
+    </div>
+    <div class="region-card" data-region="aguas">
+      <img src="img/imagenes regiones portada/aguas estancadas.png">
+      <h3>Aguas Estancadas</h3>
+    </div>
+    <div class="region-card" data-region="islas">
+      <img src="img/imagenes regiones portada/Islas de la Sombra.png">
+      <h3>Islas de la Sombra</h3>
+    </div>
+    <div class="region-card" data-region="shurima">
+      <img src="img/imagenes regiones portada/Shurima.png">
+      <h3>Shurima</h3>
+    </div>
+    <div class="region-card" data-region="targon">
+      <img src="img/imagenes regiones portada/Targon.png">
+      <h3>Targon</h3>
+    </div>
+  </div>
+
+</section>
+
+  <!-- PERSONAJES -->
+
+<!-- ===== SECCIÓN: PERSONAJES (grid de campeones con buscador y modal) ===== -->
+<section class="section" id="personajes">
+  <h2>Personajes</h2>
+
+  <input
+    type="text"
+    id="searchInput"
+    placeholder="Buscar personaje..."
+    class="search-bar"
+  >
+  <div class="champ-grid" id="champGrid"></div>
+</section>
+
+
+<!-- ===== SECCIÓN: OBJETOS (inventario de objetos con buscador y modal) ===== -->
+<section class="section" id="objetos">
+  <h2>Objetos</h2>
+
+  <input type="text" id="searchObjetos" class="search-bar" placeholder="Buscar objeto...">
+
+  <div class="obj-grid" id="objetosGrid"></div>
+</section>
+
+</section>
+  <!-- ===== SECCIÓN: MINIJUEGO (iframe con ruleta de campeones en Python/Trinket) ===== -->
+<section class="section" id="minijuego">
+  <h2>Ruleta de Campeones (Python)</h2>
+  <div style="max-width: 900px; margin: 20px auto;">
+    <iframe src="https://trinket.io/embed/python/06af4dfa0fd9" width="100%" height="600" frameborder="0" marginwidth="0" marginheight="0" allowfullscreen></iframe>
+  </div>
+</section>
+
+
+
+</main>
+
+<!-- ===== SECCIÓN: SOSTENIBILIDAD (fuera del <main>, sección independiente) ===== -->
+<section class="section" id="sostenibilidad">
+
+  <div class="sost-hero">
+    <div class="sost-hero-inner">
+      <div class="sost-hero-texto">
+        <h2>Guardianes de Runaterra</h2>
+        <p>
+          Igual que los campeones protegen Runaterra de las fuerzas del Vacío,
+          nosotros debemos proteger nuestro planeta de la contaminación y el cambio climático.
+          Cada pequeña acción cuenta: desde apagar una luz hasta reciclar un cartón.
+          En League of Legends, un equipo coordinado puede ganar cualquier partida;
+          en la vida real, millones de personas coordinadas pueden salvar el planeta.
+        </p>
+        <p class="sost-quote">
+          "La verdadera victoria no es derrotar al enemigo, sino proteger lo que más importa."
+        </p>
+      </div>
+      <div class="sost-hero-img">
+        <img src="img/LOL.png" alt="League of Legends">
+      </div>
+    </div>
+  </div>
+
+  <div class="sost-grid">
+
+    <div class="sost-card">
+      <h3>Energía Responsable</h3>
+      <p>
+        Apagar las luces al salir, aprovechar la luz natural y apostar por energías
+        renovables como la solar o la eólica son hábitos sencillos que reducen la
+        contaminación y conservan los recursos naturales para el futuro.
+      </p>
+    </div>
+
+    <div class="sost-card">
+      <h3>Reciclaje</h3>
+      <p>
+        Separar los residuos en orgánico, plástico, papel y vidrio facilita su
+        reutilización y evita que la basura acabe en océanos y bosques.
+        Reciclar correctamente protege los ecosistemas y la biodiversidad.
+      </p>
+    </div>
+
+    <div class="sost-card">
+      <h3>Reducir Huella de Carbono</h3>
+      <p>
+        Usar el transporte público, la bicicleta y consumir productos locales
+        reduce nuestra huella de carbono. Pequeños cambios de hábito repetidos
+        por millones de personas tienen un impacto global enorme.
+      </p>
+    </div>
+
+    <div class="sost-card">
+      <h3>Cuidar el Agua</h3>
+      <p>
+        Cerrar el grifo mientras te lavas los dientes o reparar fugas del hogar
+        marca una gran diferencia. El agua es el recurso más valioso del planeta
+        y protegerla es proteger la vida misma.
+      </p>
+    </div>
+
+  </div>
+
+  <div class="sost-final">
+    <p>
+      Los verdaderos campeones no solo ganan partidas,
+      también cuidan el mundo donde viven. Cada acción sostenible
+      suma experiencia para construir un futuro más limpio,
+      equilibrado y lleno de oportunidades para todos.
+      <br><br>
+      <strong>¿Estás listo para ser el campeón que el planeta necesita?</strong>
+    </p>
+  </div>
+
+</section>
+
+<!-- ===== JAVASCRIPT: LISTA DE CAMPEONES ===== -->
+<script>
+// Array con los nombres de todos los campeones.
+// Se usan para generar las tarjetas del grid y cargar sus imágenes y lore.
+const champions = [
+"Aatrox","Ahri","Akali","Akshan","Alistar","Ambessa","Amumu","Anivia","Annie","Aphelios",
+"Ashe","Aurelion_Sol","Azir",
+"Bard","Bel_veth","Blitzcrank","Brand","Braum",
+"Caitlyn","Camille","Cassiopeia","Cho_gath","Corki",
+"Darius","Diana","Dr._Mundo","Draven",
+"Ekko","Elise","Evelynn","Ezreal",
+"Fiddlesticks","Fiora","Fizz",
+"Galio","Gangplank","Garen","Gnar","Gragas","Graves","Gwen",
+"Hecarim","Heimerdinger",
+"Illaoi","Irelia","Ivern",
+"Janna","Jarvan","Jax","Jayce","Jhin","Jinx",
+"Kai_sa","Kalista","Karma","Karthus","Kassadin","Katarina","Kayle","Kayn","Kennen","Kha_zix","Kindred","Kled","Kog_Maw","K_Sante",
+"LeBlanc","Lee_Sin","Leona","Lillia","Lissandra","Lucian","Lulu","Lux",
+"Malphite","Malzahar","Maokai","Master_Yi","Milio","Miss_Fortune","Mordekaiser",
+"Naafiri","Nami","Nasus","Nautilus","Neeko","Nidalee","Nilah","Nocturne","Nunu",
+"Olaf","Orianna","Ornn",
+"Pantheon","Poppy","Pyke",
+"Qiyana","Quinn",
+"Rakan","Rammus","Rek_Sai","Rell","Renata","Renekton","Rengar","Riven","Rumble","Ryze",
+"Samira","Sejuani","Senna","Seraphine","Sett","Shaco","Shen","Shyvana","Singed","Sion","Sivir","Skarner","Smolder","Sona","Soraka","Swain","Sylas","Syndra",
+"Tahm_Kench","Taliyah","Talon","Taric","Teemo","Thresh","Tristana","Trundle","Tryndamere","Twisted_Fate","Twitch",
+"Udyr","Urgot",
+"Varus","Vayne","Veigar","VelKoz","Vex","Vi","Viego","Viktor","Vladimir","Volibear","Warwick",
+"Wukong","Xerath","Xin_Zhao","Yasuo","Yone","Yorick","Yuumi","Zac","Zed","Zeri","Ziggs","Zilean",
+"Zoe","Zyra"]
+</script>
+
+<!-- ===== JAVASCRIPT: GRID DE CAMPEONES Y BUSCADOR ===== -->
+<script>
+// Genera las tarjetas de campeones al cargar la página
+// y filtra los resultados en tiempo real según lo que escribe el usuario.
+document.addEventListener("DOMContentLoaded", function() {
+
+const grid = document.getElementById("champGrid");
+
+champions.forEach(name => {
+  const card = document.createElement("div");
+  card.className = "champ-card";
+  card.dataset.name = name;
+
+  card.innerHTML = `
+    <img src="img/personajes/${name}.jpg" loading="lazy">
+    <div class="champ-name">${name.replaceAll("_"," ")}</div>
+  `;
+  card.onclick = () => openModal(name);
+  grid.appendChild(card);
+});
+const searchInput = document.getElementById("searchInput");
+
+searchInput.addEventListener("input", () => {
+  const value = searchInput.value.toLowerCase();
+
+  document.querySelectorAll(".champ-card").forEach(card => {
+    const name = card.dataset.name.toLowerCase();
+    card.style.display = name.startsWith(value) ? "block" : "none";
+  });
+});
+});
+function openModal(name){
+
+  const lore = {
+    "Aatrox": "Aatrox y sus hermanos, otrora respetados defensores de Shurima contra el Vacío, acabarían convirtiéndose en una amenaza aún mayor para Runaterra y solo conocieron la derrota ante el uso astuto de hechizos mortales. No obstante, tras siglos de reclusión, Aatrox fue el primero en recuperar su libertad y se dedicó a corromper y transformar a cualquier necio que intentase empuñar el arma mágica que contenía su esencia. Ahora, envuelto en carne y huesos que no le pertenecen y que ha transformado en una horrenda aproximación de su antiguo aspecto, recorre Runaterra en busca de la apocalíptica venganza que tanto anhela.",
+    "Ahri": "Ahri es una raposa vastaya conectada de forma innata a la magia del reino de los espíritus. Es capaz de manipular las emociones de su presa antes de consumir su esencia, proceso que le transmite los recuerdos de cada alma que consume. Otrora una poderosa pero incontrolable depredadora, Ahri ahora viaja por el mundo en busca de vestigios de sus antepasados mientras intenta reemplazar los recuerdos robados por otros propios.",
+    "Akali": "Tras abandonar la Orden Kinkou y su título de Puño de la Sombra, Akali actúa ahora en solitario y está lista para convertirse en el arma mortal que necesita su gente. Aunque no renuncia a las enseñanzas de Shen, su maestro, ha jurado defender Jonia de sus enemigos, asesinándolos uno a uno. Los ataques de Akali son silenciosos, pero su mensaje se escucha con toda claridad: temed a la asesina sin maestro.",
+    "Akshan": "Impávido ante el peligro, Akshan combate el mal con gran carisma, ganas de impartir justa venganza y una evidente falta de camisetas. Domina el arte del combate sigiloso, por lo que es capaz de desaparecer a los ojos de sus enemigos y volver a aparecer cuando menos se lo esperan. Con un gran sentido de la justicia y un arma legendaria capaz de revivir a quien muere en combate, Akshan enmienda las injusticias cometidas por los canallas de Runaterra siguiendo siempre su propio código moral: ''No seas un capullo''.",
+    "Alistar": "Alistar, un poderoso guerrero con una reputación temible, busca venganza por la muerte de su clan a manos del imperio noxiano. Aunque fue esclavizado y forzado a vivir como gladiador, fue su voluntad inquebrantable lo que le impidió convertirse en una verdadera bestia. Ahora, libre de las cadenas de sus antiguos amos, lucha en nombre de los oprimidos y los desfavorecidos, y empuña su furia como un arma, igual de peligrosa que sus cuernos, puños y pezuñas.",
+    "Ambessa": "Todo el que conoce el apellido Medarda respeta y teme a partes iguales a la matriarca de la familia, Ambessa. Esta general noxiana encarna una mortífera combinación de fuerza implacable e inquebrantable determinación en la batalla. En cuanto a su rol como matriarca, no hay diferencia alguna, pues dotar de poder a los Medarda requiere de una gran astucia y no hay cabida para el fracaso ni la compasión. Aceptando como suya la despiadada senda del Lobo, Ambessa hará todo lo que esté en su mano para proteger el legado de su familia, aunque le cueste el amor de sus propios hijos.",
+    "Amumu": "Cuenta la leyenda que Amumu es un alma solitaria y melancólica de la vieja Shurima que vaga por el mundo en busca de un amigo. Condenado por una maldición ancestral, su destino es permanecer solo para siempre, pues su tacto es muerte y su cariño, la perdición. Aquellos que afirman haberlo visto lo describen como un cadáver viviente, menudo y cubierto de vendajes. Amumu ha suscitado mitos, canciones y folclore transmitidos de generación en generación, hasta tal punto que ya es imposible separar la realidad de la ficción.",
+    "Anivia": "Anivia es un espíritu alado benevolente que soporta ciclos interminables de vida, muerte y nacimiento para proteger Freljord. Semidiosa nacida del hielo implacable y los vientos crueles, canaliza estos poderes elementales para anular a cualquiera que se atreva a perturbar su hogar. Anivia guía y protege a las tribus del severo norte, donde la veneran como un símbolo de esperanza y un presagio de grandes cambios. Ella lo da todo en la lucha sabiendo que, a través de su sacrificio, su memoria perdurará y renacerá en un nuevo mañana.",
+    "Annie": "Peligrosa pero encantadoramente precoz, Annie es una pequeña maga con un inmenso poder piromántico. Incluso en los parajes montañosos al norte de Noxus es una hechicera sin precedentes. Su afinidad natural con el fuego se manifestó a temprana edad en arrebatos emocionales e impredecibles, aunque finalmente aprendió a controlar esos trucos traviesos. Uno de sus favoritos es invocar a su adorado osito de peluche Tibbers; una bestia protectora envuelta en llamas. Atrapada en la perpetua inocencia de la niñez, Annie vaga por bosques oscuros, siempre buscando a alguien con quien jugar.",
+    "Aphelios": "Aphelios emerge de entre las sombras de la noche con armas en mano y asesina a los enemigos de su fe en un silencio inquietante, hablando a tiro limpio únicamente a través de la certitud de su puntería. Un veneno que le impide hablar se encarga de impulsarlo mientras su hermana Alune lo guía desde un lejano templo, enviándole todo un arsenal de armas de piedra lunar. Mientras la luna brille, Aphelios nunca estará solo.",
+    "Ashe": "Ashe, comandante hija del hielo de la tribu de Avarosa, lidera las hordas más numerosas del norte. Impasible, inteligente e idealista, aunque incómoda en su papel de líder, utiliza los poderes mágicos ancestrales de su linaje para empuñar un arco de Hielo Puro. Su gente cree que Ashe es la heroína mitológica Avarosa reencarnada, y ella espera unificar Freljord una vez más al recuperar sus antiguas tierras tribales.",
+    "Aurelion_Sol": "Aurelion Sol solía agraciar al vasto vacío del cosmos con las maravillas celestiales que él mismo ideaba. Ahora, se ve forzado a hacer uso de su increíble poder para satisfacer los deseos de un imperio espacial que lo ha engañado para convertirlo en su esclavo. Aurelion Sol desea regresar a su vida como forjador de estrellas, por lo que no dudará en hacer uso del mismísimo firmamento para recuperar su libertad.",
+    "Azir": "Azir, emperador de Shurima en un pasado remoto, fue un hombre orgulloso que estuvo a punto de alcanzar la inmortalidad. Dominado por la arrogancia, fue traicionado y asesinado en la hora de su mayor triunfo, pero ahora, milenios después, ha renacido como un ser Ascendido de inmenso poder. Su enterrada ciudad ha resurgido en medio de las arenas y Azir está decidido a restaurar la antigua gloria de Shurima.",
+    "Bard": "Bardo, un viajero de más allá de las estrellas, es un agente de la serendipia que lucha para mantener un equilibrio en el que la vida pueda soportar la indiferencia del caos. Muchos habitantes de Runaterra cantan canciones que hablan de su naturaleza extraordinaria, pero todos están de acuerdo en que el vagabundo cósmico se siente atraído por los artefactos de gran poder mágico. Rodeado por un jubiloso coro de meeps, espíritus serviciales, es imposible creer que sus acciones son malévolas, ya que Bardo siempre sirve al bien mayor... a su manera.",
+    "Bel_veth": "Una emperatriz horripilante creada a partir de los materiales de la ciudad que devoró. Bel'Veth representa el mismísimo fin de Runaterra tal y como la conocemos... y marca el comienzo de una monstruosa realidad creada a su imagen y semejanza. Impulsada por la historia de otras épocas, el conocimiento y los recuerdos que obtuvo de este mundo, alimenta con voracidad su necesidad y ansia de experiencias y emociones, consumiendo todo a su paso. Aun así, jamás quedará saciada tras devorar un solo mundo, y ahora tiene la mirada puesta en los ancestrales maestros del Vacío...",
+    "Blitzcrank": "Blitzcrank es un autómata enorme, casi indestructible, creado originalmente para el tratamiento de residuos tóxicos. Sin embargo, este propósito original le parecía demasiado restrictivo, así que se automodificó para servir mejor a los débiles del Sumidero. Blitzcrank no duda en emplear su fuerza y su resistencia para proteger a los demás, con su práctico puño de metal o con un estallido de energía para someter a cualquiera que cause problemas.",
+    "Brand": "Brand, antiguo miembro de la tribu Kegan Rodhe del helado Freljord, es una lección sobre la tentación de un poder mayor. En busca de una de las legendarias Runas Geogénicas, Kegan traicionó a sus compañeros y se quedó con la runa. El hombre desapareció al instante. Su alma se consumió y su cuerpo pasó a ser un recipiente de llamas vivas. Ahora, Brand recorre Valoran en busca de otras Runas Geogénicas, jurando vengarse por las calamidades que posiblemente jamás habría podido sufrir en una docena de vidas mortales.",
+    "Braum": "Bendecido con bíceps enormes y un corazón aún más grande, Braum es un héroe muy apreciado en Freljord. Todas las tabernas al norte del Fuerte Helado brindan por su fuerza legendaria. Se dice que taló un bosque de robles en una sola noche y convirtió una montaña entera en escombros. Cargando una puerta acorazada encantada a sus espaldas como escudo, Braum recorre el gélido norte luciendo una sonrisa bigotuda tan grande como sus músculos: un verdadero amigo para todos los necesitados.",
+    "Caitlyn": "Reconocida como su mejor agente, Caitlyn Kiramman es también la mejor arma de Piltover para librar a la ciudad de sus esquivos criminales. A menudo trabaja con Vi, y actúa como el contrapunto lógico a la naturaleza más impetuosa de su compañera. Su rifle hextech no es el arma más poderosa de Caitlyn; es un superior intelecto que le permite colocar trampas para cualquier infractor de la ley lo suficientemente necio como para operar en la Ciudad del Progreso.",
+    "Camille": "Convertida en un arma viviente diseñada para operar fuera de la ley, Camille es la jefa de espías del clan Ferros, una elegante agente de élite que se asegura de que nada amenace el funcionamiento de Piltover ni de Zaun. Su adaptabilidad y minuciosidad hacen que vea la técnica descuidada como una humillación con la que hay que terminar. Dotada de una mente tan aguda como las hojas que esgrime, ha emprendido una búsqueda de la perfección a través de las mejoras hextech a las que se ha sometido, mejoras que han llevado a muchos a preguntarse si no será más máquina que mujer.",
+    "Cassiopeia": "Cassiopeia es una criatura mortal empeñada en manipular a otros según su siniestra voluntad. La hija más joven y hermosa de la noble familia Du Couteau de Noxus, se aventuró en lo más profundo de las criptas debajo de Shurima en busca de poder ancestral. Allí, fue mordida por un temible guardián de la tumba, cuyo veneno la transformó en una depredadora con aspecto de víbora. Astuta y ágil, Cassiopeia ahora se desliza bajo el velo de la noche, petrificando a sus enemigos con su mirada funesta.",
+    "Cho_gath": "Desde el momento en que Cho'Gath emergió por primera vez a la dura luz solar de Runaterra, a la bestia solo le impulsaba el hambre más pura e insaciable. La perfecta expresión del deseo del Vacío de acabar con la vida, la compleja biología de Cho'Gath convierte rápidamente la materia en masa muscular, aumentando su densidad o endureciendo su caparazón externo como si fuese un diamante orgánico. Cuando aumentar su tamaño no se adapta a las necesidades del Vacío, Cho'Gath vomita el exceso de materia como espinas afiladas, dejando a las presas ensartadas y listas para darse un festín después.",
+    "Corki": "El piloto yordle Corki adora dos cosas por encima de todas las demás: volar y su glamuroso bigote. Aunque no necesariamente en ese orden. Tras abandonar la Ciudad de Bandle, se estableció en Piltover y se enamoró de las máquinas maravillosas que allí encontró. Se dedicó al desarrollo de artilugios voladores, liderando una fuerza de defensa aérea de veteranos experimentados conocidos como las Serpientes Aulladoras. Manteniendo la calma bajo presión, Corki patrulla los cielos de su hogar adoptivo, y nunca ha encontrado un problema que una buena andanada de proyectiles no pudiese resolver.",
+    "Darius": "No hay mayor símbolo del poder de Noxus que Darius, el comandante más temido y más curtido en batallas de toda la nación. Pasando de orígenes humildes a convertirse en la Mano de Noxus, se abre paso a tajos entre los enemigos del imperio, muchos de ellos noxianos. Sabiendo que él nunca duda que su causa sea justa ni tampoco duda cuando levanta su hacha, aquellos que se oponen al comandante de la legión trifariana no encontrarán piedad.",
+    "Diana": "Portadora de una espada en forma de media luna, Diana es una guerrera de los Lunari, una fe rechazada en casi todas las tierras a los pies del Monte Targon. Ataviada con una armadura reluciente del color de la nieve en una noche de invierno, es la personificación del poder de la luna plateada. Imbuida de la esencia de una presencia de más allá de la elevada cima de Targon, Diana ya no es humana en su totalidad y lucha por entender su poder y propósito en este mundo.",
+    "Dr._Mundo": "Loco de remate, trágicamente homicida, terriblemente morado: el Dr. Mundo es lo que mantiene en sus casas a muchos habitantes de Zaun en las noches especialmente oscuras. Este autoproclamado doctor fue paciente del psiquiátrico más infame de Zaun. Tras ''curar'' a todo el personal, Dr. Mundo estableció su consulta en las salas vacías en las que solían tratarlo y comenzó a imitar los inmorales procedimientos que estaba tan acostumbrado a vivir en sus carnes. Con un armario repleto de medicinas y ningún tipo de conocimiento médico, se vuelve más monstruoso tras cada inyección y aterroriza a los desgraciados ''pacientes'' que deambulan demasiado cerca de su oficina.",
+    "Draven": "En Noxus, los guerreros conocidos como 'justicieros' se enfrentan en recintos donde corre la sangre y se pone a prueba la fortaleza. Pero ninguno ha alcanzado la fama de Draven, un antiguo soldado cuyo sentido del espectáculo y habilidad sin igual con las hachas giratorias son enormemente apreciados por la multitud. Adicto al exhibicionismo de su propia e impetuosa perfección, Draven se ha jurado derrotar a quien sea necesario con tal de asegurarse de que su nombre se coree por todo el imperio para siempre.",
+    "Ekko": "Ekko, un prodigio surgido de las implacables calles de Zaun, puede manipular el tiempo para sacar ventaja de todas las situaciones. Con una máquina de su invención llamada Dispositivo Z, explora las distintas posibilidades de la realidad hasta dar con el momento ideal para conseguir lo imposible a la primera. Aunque Ekko valora muchísimo su libertad, si algo amenaza a sus seres queridos, él y los Firelights harán lo que sea para defenderlos.",
+    "Elise": "Elise es una letal depredadora que mora en un palacio cerrado y sin luz situado en el corazón de la ciudad más antigua de Noxus. En su día fue una mujer mortal, señora de una casa poderosa, pero la picadura de un malvado semidiós la transformó en una criatura hermosa, inmortal y totalmente inhumana: una criatura con aspecto de araña que atrae a sus ingenuas presas hacia sus redes. Elise se aprovecha de inocentes para mantener su eterna juventud y ahora prefiere alimentarse de los ingenuos y los infieles. Hay pocos que sean capaces de resistirse a sus encantos.",
+    "Evelynn": "En los oscuros adentros de Runaterra, el súcubo Evelynn deambula en busca de su siguiente víctima. Acecha a sus presas con una voluptuosa fachada femenina, pero cuando alguien sucumbe a sus encantos, Evelynn libera su auténtica forma. Después somete a su víctima a un tormento atroz, deleitándose con su dolor. Para el súcubo, estos 'ligues' son aventuras amorosas inocentes. Para el resto de Runaterra, son historias macabras de lujuria retorcida y dantescos recordatorios del precio del deseo lascivo.",
+    "Ezreal": "Ezreal, un aventurero aficionado a deslizarse y dotado de artes mágicas sin saberlo, saquea catacumbas perdidas, lidia con maldiciones ancestrales y supera con facilidad adversidades imposibles. De valor y chulería sin límites, prefiere improvisar para salir de cualquier situación peliaguda, confiando en parte en su ingenio, pero sobre todo en su guantelete místico de Shurima, que utiliza para desatar devastadoras ondas explosivas arcanas. Una cosa sí es segura: cuando Ezreal se deja ver, los problemas no andan muy por detrás. Ni muy por delante. Seguramente estén por todas partes.",
+    "Fiddlesticks": "Algo ha despertado en Runaterra. Algo ancestral. Algo terrible. El horror conocido como Fiddlesticks acecha en las lindes de la sociedad, en las zonas en las que impera la paranoia, donde se alimenta de aquellos a los que aterroriza. Armada con una destartalada guadaña, esta criatura cosecha miedo en estado puro y consume las mentes de aquellos desafortunados que consiguen sobrevivir a su encuentro. Temed el graznido del cuervo, el susurro de esa silueta que parece casi humana... Fiddlesticks ha regresado.",
+    "Fiora": "Fiora, la duelista más temida de Valoran, ha alcanzado renombre por su estilo brusco y su mente astuta, así como por la velocidad de su estoque. Fiora nació en el seno de la Casa Laurent, en el reino de Demacia, y asumió el control de la familia a raíz de un escándalo que casi acaba con ellos. La reputación de la Casa Laurent se hundió, pero Fiora empeñó todos sus esfuerzos en restablecer el honor de su familia y devolverla al lugar que le correspondía entre las mejores de Demacia.",
+    "Fizz": "Fizz es un yordle anfibio que habita entre los arrecifes de alrededor de Aguas Estancadas. Suele recuperar y devolver los diezmos arrojados al mar por capitanes supersticiosos, pero incluso los marineros más agudos saben que no hay que plantarle cara, puesto que hay muchas historias que hablan sobre aquellos que han subestimado a este ser resbaladizo. A menudo lo confunden con algún tipo de espíritu caprichoso del océano. Parece ser capaz de dominar a las bestias de las profundidades y se deleita en confundir a sus aliados y a sus enemigos por igual.",
+    "Galio": "Fuera de la reluciente ciudad de Demacia, el coloso de piedra Galio se mantiene vigilante. Construido como un baluarte contra los magos enemigos, suele permanecer inmóvil durante décadas hasta que la presencia de magia poderosa lo vuelve a traer a la vida. Una vez activado, Galio aprovecha al máximo su tiempo, y saborea el placer del combate y el raro honor de defender a sus compatriotas. Pero estos triunfos siempre son agridulces, ya que la magia que destruye también es su fuente de reanimación, y cada victoria lo vuelve a dormir.",
+    "Gangplank": "Tan impredecible como brutal, el destronado rey de los piratas conocido como Gangplank es temido a lo largo y ancho del mundo. Antes gobernaba la ciudad portuaria de Aguas Estancadas, y aunque su reinado haya terminado, hay quienes creen que esto solo lo ha hecho más peligroso. Gangplank preferiría ver Aguas Estancadas bañada en sangre una vez más antes de dejar que alguien más la tomase. Ahora con pistola, machete y barriles de pólvora, está decidido a reclamar lo que ha perdido.",
+    "Garen": "Garen, un orgulloso y noble guerrero, lucha en las filas de la Vanguardia Impertérrita. Es querido entre sus compañeros y respetado por sus enemigos, y no solo por ser vástago de la prestigiosa familia Crownguard, responsable de la defensa de Demacia y sus ideales. Ataviado con una armadura resistente a la magia y empuñando una poderosa espada, Garen siempre está listo para enfrentarse a los magos y hechiceros en el campo de batalla como un auténtico torbellino de virtuoso acero.",
+    "Gnar": "Gnar es un yordle primitivo cuyas payasadas lúdicas pueden estallar en la ira de un niño pequeño en un instante, transformándolo en una bestia enorme empeñada en la destrucción. Congelado en Hielo Puro durante milenios, la curiosa criatura se liberó y ahora salta por un mundo cambiado que él ve como exótico y maravilloso. Encantado con el peligro, Gnar arroja todo lo que puede a sus enemigos, ya sea su boomerang de hueso o un edificio cercano.",
+    "Gragas": "Alegre e imponente por partes iguales, Gragas es un enorme y provocador cervecero que vive para encontrar nuevas formas de animar a todos los que le rodean. Proveniente de un lugar desconocido, va en busca de ingredientes raros entre los páramos de Freljord con los que crear el brebaje perfecto. Impulsivo y cabezota, se hizo famoso por las trifulcas que inicia, que a menudo desembocan en fiestas interminables y en grandes daños materiales. Cuando Gragas aparece trae consigo la alegría y la destrucción, en ese orden.",
+    "Graves": "Malcolm Graves es un famoso mercenario, jugador y ladrón. Un hombre buscado en todas las ciudades e imperios que ha visitado. A pesar de su temperamento explosivo, posee un firme sentido del honor criminal, que a menudo ejecuta con su escopeta de doble cañón, Destiny. En los últimos años, ha reconducido su problemática colaboración con Twisted Fate, y juntos han prosperado una vez más en la hostilidad del submundo criminal de Aguas Estancadas.",
+    "Gwen": "Gwen, una muñeca a la que la magia confirió vida, va armada con los mismos utensilios que en su día la confeccionaron. Lleva consigo la fuerza del amor de su creadora en cada paso que da y es consciente de la maravilla de vivir. La Niebla consagrada obedece a su voluntad, una magia ancestral y protectora que bendice las tijeras, las agujas y el hilo de coser de Gwen. Hay muchas cosas que son nuevas para Gwen, pero ella preserva el júbilo por luchar por lo bueno que sobrevive en un mundo roto.",
+    "Hecarim": "Hecarim es una fusión espectral de hombre y bestia, condenado a arrollar las almas de los vivos por toda la eternidad. Cuando las Islas Bendecidas cayeron en la sombra, este orgulloso caballero fue aniquilado por las energías destructivas de la Ruina, junto con toda su caballería y sus monturas. Ahora, cada vez que la Niebla Negra llega a Runaterra, lidera su devastadora ofensiva, deleitándose en la matanza y aplastando al enemigo bajo sus cascos blindados.",
+    "Heimerdinger": "El excéntrico profesor Cecil B. Heimerdinger es considerado una de las mentes más innovadoras y uno de los inventores más admirados de la historia. Como miembro distinguido más antiguo del Consejo de Piltover, ha sido testigo de lo mejor y lo peor de la ciudad en su eterna pugna por el progreso. Aun así, este brillante científico y profesor no desiste en seguir mejorando las vidas de los ciudadanos con sus originales inventos.",
+    "Illaoi": "El poderoso físico de Illaoi solo se ve empequeñecido por su indómita fe. Como profeta del Gran Kraken, hace uso de un gran ídolo de oro para arrancar el espíritu del cuerpo de sus enemigos y fracturar su percepción de la realidad. Todo el que desafía a la ''Portadora de la Verdad de Nagakabouros'' no tarda en descubrir que Illaoi jamás combate sola: el dios de las Islas de las Serpientes lucha a su lado.",
+    "Irelia": "La ocupación noxiana de Jonia produjo mucho héroes, pero ninguno más improbable que la joven Irelia de Navori. Se entrenó en las antiguas danzas de su gente y adaptó su arte para la guerra, usando los movimientos elegantes y diligentemente practicados para hacer levitar una variedad de cuchillas letales. Tras demostrar su valía como luchadora la empujaron al papel de líder y representante de la resistencia y, hasta el día de hoy, sigue dedicada a la preservación de su tierra natal.",
+    "Ivern": "Ivern Bósquez, conocido por muchos como el Padre Arborescente, es un ser peculiar, mitad humano y mitad árbol, que deambula por los bosques de Runaterra y cultiva la vida allá donde va. Conoce los secretos del mundo natural y es buen amigo de todo lo que crece, vuela o se refugia en él. Ivern comparte su curiosa sabiduría con todo aquel con el que se encuentra, rejuvenece los bosques y, de vez en cuando, confía sus secretos a mariposas indiscretas.",
+    "Janna": "Janna, armada con el poder de los vendavales de Runaterra, es un misterioso espíritu elemental que aprovecha el viento para proteger a los más desfavorecidos de Zaun. Hay quien cree que surgió de los ruegos de los marineros de Runaterra, que rezaban por ganarse el favor de los vientos en sus singladuras por aguas traicioneras o en el fragor de la tempestad. Desde entonces, el nombre de Janna ha resonado en las profundidades de Zaun, donde se ha convertido en un faro de esperanza para los necesitados. Nadie sabe dónde ni cuándo aparecerá, pero casi siempre ha respondido a la llamada.",
+    "Jarvan": "El príncipe Jarvan, descendiente de la dinastía Escudo de Luz, es heredero al trono de Demacia. Criado para ser ejemplo de las mayores virtudes de su nación, se ve obligado a equilibrar las grandes expectativas que se le imponen con su propio deseo de luchar en el frente. Jarvan sirve de inspiración a sus tropas gracias a su imponente valor y abnegada determinación, vistiendo los colores de su familia con orgullo como prueba irrefutable de su capacidad de liderazgo.",
+    "Jax": "Incomparable en su habilidad con armas especiales y su mordaz sarcasmo, Jax es el último maestro de armas conocido de Icathia. Después de que su tierra natal fuera devastada por su propia arrogancia al desatar el Vacío, Jax y los suyos juraron proteger lo poco que quedó. Ahora que la magia se asienta en el mundo, esta amenaza durmiente acecha de nuevo y Jax vaga por Valoran con la última luz de Icathia, poniendo a prueba a todos los guerreros con los que se encuentra para saber si hay alguno lo suficientemente fuerte como para combatir a su lado...",
+    "Jayce": "Jayce Talis es un brillante inventor que, junto a su amigo Viktor, realizó grandes hallazgos en el campo de la tecnología hextech. Con el reconocimiento de todo Piltover, intenta estar a la altura de su reputación como el hombre del progreso; sin embargo, no son pocas las veces en las que se ve sobrepasado por las expectativas. Jayce, armado con su martillo hextech y dispuesto a defender el mañana, ha empezado a observar cómo su invento ha contribuido a agrandar la brecha entre Piltover y Zaun.",
+    "Jhin": "Jhin es un meticuloso criminal psicópata que ve el asesinato como arte. Otrora prisionero jonio, fue liberado gracias a los sombríos tejemanejes del consejo de Jonia. Ahora, el asesino en serie trabaja como sicario de la secta. Con su pistola como pincel, la obra de Jhin muestra un arte brutal, tanto para las víctimas como para los espectadores. Encuentra un cruel placer en la escenificación atroz, lo cual lo convierte en un candidato sin igual para mandar el más poderoso de los mensajes: el terror.",
+    "Jinx": "Jinx, una criminal inestable e impulsiva de la Ciudad Subterránea, se ve atormentada por las consecuencias de su pasado, pero eso no le impide desatar su propio caos en Piltover y Zaun. Hace uso de todo un arsenal de armas caseras con las que desata enormes explosiones y proyectiles de colores. El caos que siembra a su paso inspira a los desamparados a rebelarse.",
+    "K_Sante": "K'Sante, un guerrero desafiante y valiente, lucha contra gigantescas bestias y despiadados Ascendidos para proteger su hogar, Nazumah, un codiciado oasis ubicado entre las dunas shurimanas. Tras cortar lazos con su pareja, K'Sante se percata de que, para convertirse en un guerrero digno de liderar su ciudad, debe calmar su tesón y apaciguar su egoísta búsqueda del éxito. Solo entonces podrá evitar ser presa de su propio orgullo y encontrar la sabiduría que necesita para derrotar a los viles monstruos que amenazan a su pueblo.",
+    "Kai_sa": "Reclamada por el Vacío cuando era solo una niña, Kai'Sa logró sobrevivir por pura tenacidad y fuerza de voluntad. Sus experiencias la han convertido en una cazadora letal y, para algunos, el presagio de un futuro que preferirían no vivir para ver. Ahora que ha entrado en una tensa simbiosis con un caparazón viviente del Vacío, pronto llegará el momento de decidir si perdona a aquellos mortales que la llaman monstruo y se alía con ellos para tratar de derrotar a la oscuridad que se avecina... o simplemente deja que su mente olvide y que el Vacío consuma el mundo que la abandonó.",
+    "Kalista": "Kalista, un espectro de cólera y castigo, es el inmortal espíritu de la venganza, una pesadilla acorazada que llega desde las Islas de la Sombra para dar caza a los embusteros y los traidores. Puede que todos los que han sido traicionados pidan venganza con lágrimas de sangre, pero Kalista solo responde a quienes están dispuestos a ofrecer su alma a cambio. Aquellos que se convierten en el objetivo de la ira de Kalista tienen que hacer las paces con sí mismos, porque cualquier pacto sellado con la sombría cazadora solo puede terminar en las frías llamas de sus lanzas espirituales.",
+    "Karma": "No hay mortal que ejemplifique las tradiciones espirituales de Jonia mejor que Karma. Es la personificación de un alma antigua reencarnada un sinfín de veces, que acumula en cada vida sucesiva los recuerdos de las vidas pasadas y que ha sido bendecida con un poder que pocos pueden comprender. Ha hecho lo que estaba en su mano para guiar a su pueblo en los recientes tiempos de crisis, pero sabe que la paz y la armonía solo se alcanzarán pagando un alto precio, tanto para ella como para la tierra que más aprecia.",
+    "Karthus": "Karthus, heraldo del olvido, es un espíritu inmortal cuyos pavorosos cantos preceden al horror de su dantesca aparición. Los vivos temen la eternidad de la no muerte, pero Karthus solo percibe hermosura y pureza en su abrazo, una comunión perfecta entre la vida y la muerte. Cuando Karthus sale de las Islas de la Sombra, es para llevar a los vivos la dicha de la muerte como apóstol de los no vivos.",
+    "Kassadin": "Dejando tras sí una huella ardiente por los lugares más oscuros del mundo, Kassadin sabe que sus días están contados. Guía y aventurero de Shurima que ha viajado por medio mundo, había elegido formar a una familia entre las pacíficas tribus del sur, hasta el día en que su pueblo fue consumido por el Vacío. Kassadin prometió vengarse, combinando una serie de artefactos arcanos y tecnologías prohibidas para la lucha que le esperaba. Finalmente, Kassadin partió hacia los páramos de Icathia, listo para enfrentarse a cualquier ser monstruoso del Vacío en su búsqueda del autoproclamado profeta, Malzahar.",
+    "Katarina": "Con un juicio decisivo y letal en el combate, Katarina es una de las mejores asesinas noxianas. Al ser la primogénita del legendario general Du Couteau, ha dado a conocer sus habilidades con asesinatos rápidos contra enemigos inconscientes. Una ambición exaltada la ha conducido a perseguir objetivos fuertemente protegidos, incluso poniendo en peligro a sus aliados. No importa la misión; Katarina no dudará en llevar a cabo su tarea en medio de un torbellino de dagas dentadas.",
+    "Kayle": "Kayle, nacida de un Aspecto de Targon en el punto álgido de las Guerras Rúnicas, honró el legado de su madre al continuar la lucha por la justicia con sus alas de llamas divinas. Durante muchos años, ella y su hermana gemela Morgana fueron las protectoras de Demacia hasta que los incesantes fracasos de los mortales decepcionaron a Kayle y abandonó para siempre su reino. Aun así, las leyendas que se narran sobre ella dicen que castiga a los injustos con sus espadas ardientes, y muchos ansían que llegue el día de su regreso.",
+    "Kayn": "Shieda Kayn, un practicante sin par de la mortífera magia sombría, lucha por alcanzar su verdadero destino: llegar a guiar algún día a la Orden de la Sombra hacia una nueva era de supremacía jonia. Empuña la oscura arma viviente Rhaast, impasible ante la progresiva corrupción de su cuerpo y su mente. Solo hay dos desenlaces posibles: o bien Kayn somete al arma a su voluntad... o bien la malévola hoja lo consume por completo, allanando el camino hacia la destrucción de toda Runaterra.",
+    "Kennen": "Más allá de ser el rápido encargado de mantener el equilibrio en Jonia, Kennen es también el único yordle de los kinkou. A pesar de su pequeño y peludo tamaño, siempre está impaciente por enfrentarse a cualquier amenaza dando rienda suelta a una tormenta de shurikens con un entusiasmo inagotable. Junto a su maestro Shen, Kennen vigila el reino espiritual y emplea una energía eléctrica asoladora para acabar con sus enemigos.",
+    "Kha_zix": "El Vacío crece y el Vacío se adapta; verdades que son más evidentes en Kha'Zix que en ningún otro de sus innumerables engendros. La evolución impulsa el núcleo de este horror mutante, nacido para sobrevivir y matar a los fuertes. Cuando se esfuerza por hacerlo, crea formas nuevas y más efectivas de contrarrestar y matar a su presa. Una bestia descerebrada en sus comienzos, la inteligencia de Kha'Zix se ha desarrollado tanto como su forma. Ahora, la criatura planea sus cazas e incluso se aprovecha del terror visceral que engendra en sus víctimas.",
+    "Kindred": "Divididos, pero nunca separados, Kindred representan las dos esencias de la muerte. El arco de Cordera ofrece una rápida liberación de los pesares del reino mortal a aquellos que aceptan su destino. Lobo da caza a quienes intentan escapar de él y les revela su inexorable necesidad con una dentellada de sus poderosas fauces. Aunque las interpretaciones sobre la naturaleza de Kindred varían a lo largo y ancho de Runaterra, lo cierto es que todos los mortales que moran en ella deben elegir la cara de la muerte que prefieren.",
+    "Kled": "Kled es un guerrero yordle tan intrépido como malhumorado y es la encarnación de la furiosa bravuconería noxiana. Los soldados del imperio lo adoran, sus oficiales desconfían de él y la clase noble lo detesta. Muchos afirman que ha luchado en todas y cada una de las campañas de guerra noxianas, que ha ''adquirido'' todos los títulos militares habidos y por haber, y que nunca se echa para atrás. Aunque la veracidad de estos rumores sea cuestionable, una parte de la leyenda es innegable: cuando Kled se lanza a la batalla a lomos de Skaarl, su no muy fiable corcel, protege todo lo que es suyo... y reclama todo lo que puede.",
+    "Kog_Maw": "Escupido de una incursión deteriorada del Vacío en los yermos de Icathia, Kog'Maw es una criatura curiosa y pútrida con una boca enorme y cáustica. Esta particular criatura necesita morder y babear todo lo que esté a su alcance para comprenderlo. Aunque no es malo por naturaleza, la encantadora inocencia de la criatura es peligrosa, ya que suele dar lugar a un frenesí alimenticio, y no lo hace por alimentarse, sino que lo hace para satisfacer una curiosidad que no tiene fin.",
+    "LeBlanc": "Misteriosa incluso para el resto de miembros de la camarilla de la Rosa Negra, LeBlanc es uno de los muchos nombres que usa una mujer pálida que ha manipulado a la gente y a los sucesos desde los primeros días de Noxus. Con el uso de la magia para reflejarse, la hechicera puede aparecérsele a cualquiera, donde sea e, incluso, en varios sitios a la vez. Siempre está conspirando donde nadie la ve y sus verdaderos motivos son tan inescrutables como su identidad cambiante.",
+    "Lee_Sin": "Lee Sin, maestro de las artes marciales ancestrales de Jonia, es un luchador con principios que canaliza la esencia del espíritu del dragón para enfrentarse a cualquier desafío. Aunque perdió la vista hace muchos años, el monje guerrero ha dedicado su vida a proteger su hogar contra cualquiera que se atreva a alterar su sagrado equilibrio. Los enemigos que subestiman su actitud meditativa tendrán que vérselas con sus legendarios puños ardientes y sus fulgurantes patadas giratorias.",
+    "Leona": "Imbuida del fuego del sol, Leona es una guerrera sagrada de los Solari que defiende el Monte Targon con su Hoja del cénit y su Escudo del amanecer. Su piel brilla como las estrellas y sus ojos resplandecen con el poder del aspecto celestial de su interior. Con su armadura de oro y con el peso de una terrible carga de conocimiento ancestral, Leona otorga la iluminación a unos y la muerte a otros.",
+    "Lillia": "Lillia es una tímida cervatilla feérica que merodea a su antojo por los bosques jonios. Se oculta de los mortales, cuya misteriosa naturaleza la cautiva y la intimida a partes iguales, con la esperanza de descubrir por qué los sueños humanos han dejado de alcanzar las ramas del ancestral Árbol Onírico. Ahora viaja por Jonia brandiendo una varita mágica con el objetivo de encontrar los sueños por cumplir de sus habitantes. Solo al conseguirlo podrá Lillia alcanzar todo su potencial y ayudar a los demás a deshacerse de los nudos de sus miedos a fin de dar con el resplandor que guardan en su interior. ¡Yip!",
+    "Lissandra": "La magia de Lissandra convierte el poder del hielo en algo oscuro y terrible. Con la fuerza de su hielo negro, además de congelar a aquellos que se le oponen, los empala y los destruye sin mostrar piedad. Se la conoce como ''la Bruja de Hielo'' entre los aterrados habitantes del norte. Pero la verdad es mucho más siniestra: Lissandra corrompe la naturaleza con el fin de desatar una era helada sobre el mundo.",
+    "Lucian": "Lucian, miembro de los Centinelas de la Luz, es un adusto cazador de espíritus, a los que persigue y aniquila con sus pistolas reliquia gemelas. Cuando el espectro Thresh le arrebató a su esposa, Lucian se dedicó en cuerpo y alma a consumar su venganza. A pesar de que ella haya vuelto a la vida, aún sigue cegado por la rabia. Implacable y decidido, Lucian no se detendrá ante nada para proteger a los vivos de los horrores de la Niebla Negra.",
+    "Lulu": "Lulu, la yordle maga, es conocida por invocar ilusiones oníricas y criaturas imaginarias en sus viajes por Runaterra con su hada compañera, Pix. Lulu le da forma a la realidad a su antojo, transforma el tejido del mundo y de lo que ve como los límites de este reino físico y mundano. Aunque otros consideran su magia poco natural, como mucho, y peligrosa, como poco, ella cree que a todo el mundo le vendría bien un toque de encanto.",
+    "Lux": "Luxanna Crownguard procede de Demacia, un reino insular en el que las habilidades mágicas se observan con temor y suspicacia. Capaz de manipular la luz a su voluntad, creció temiendo que la descubriesen y la exiliaran, por lo que se vio obligada a mantener su poder en secreto a fin de preservar el estatus de su familia. No obstante, el optimismo y la resistencia de Lux la han llevado a aceptar su talento especial, y ahora emplea su poder disimuladamente al servicio de su tierra natal.",
+    "Malphite": "Como una criatura enorme de piedra viviente, a Malphite le cuesta imponer el orden en un mundo caótico. Creado como sirviente de fragmentos de un obelisco sobrenatural conocido como el Monolito, usó su increíble fuerza elemental para mantener y proteger a su progenitor, pero acabó por fracasar en su labor. El único superviviente de la destrucción ahora padece a los blandengues de Runaterra y sus naturalezas fluidas, mientras se esfuerza en buscar un nuevo rol digno del último de los de su especie.",
+    "Malzahar": "Malzahar, un fanático mago vidente dedicado a la unión de toda vida, está convencido de que el nuevo y emergente Vacío es el camino hacia la salvación de Runaterra. En pleno desierto de Shurima siguió las voces que susurraban en su mente hasta llegar a la antigua Icathia. Entre las ruinas de aquella tierra, posó la vista en el mismísimo corazón oscuro del Vacío y recibió un nuevo poder y propósito. Malzahar ahora se considera a sí mismo un pastor encargado de conducir a quienes se hayan perdido de vuelta al redil... o de liberar a los entes del Vacío que moran en las profundidades.",
+    "Maokai": "Maokai es un imponente y feroz treant que lucha contra los horrores antinaturales de las Islas de la Sombra. Las ansias de venganza le inundaron después de que un cataclismo mágico destruyera su hogar, y sobrevive a la podredumbre únicamente por las aguas de vida imbuidas en su duramen. Maokai, antaño un espíritu de la naturaleza pacífico, lucha ahora con fiereza para desterrar la plaga de no vida de las Islas de la Sombra y restituir la anterior belleza de su hogar.",
+    "Master_Yi": "Maestro Yi ha atemperado su cuerpo y agudizado su mente, de modo que el pensamiento y la acción se han convertido casi en uno. Aunque elige emplear la violencia solo como último recurso, la gracia y la velocidad de su espada aseguran que el final siempre será rápido. Como uno de los últimos practicantes vivos del arte jonio de Wuju, Yi ha dedicado su vida a perpetuar el legado de su pueblo, escudriñando a los nuevos discípulos potenciales con sus siete lentes de la perspicacia para identificar a los más dignos.",
+    "Milio": "Milio es un jovencito amable de Ixtal que, a pesar de su corta edad, ha conseguido dominar el axioma ígneo y ha descubierto las llamas de la calma. Con este nuevo poder, Milio pretende ayudar a su familia y poner fin a su exilio uniéndose a los Yun Tal, como ya hiciese antaño su abuela. Después de atravesar las junglas de Ixtal hasta llegar a la capital de Ixaocan, Milio ahora se prepara para enfrentarse al Vidalion y unirse a los Yun Tal, sin ser consciente de las pruebas y los peligros que le aguardan.",
+    "Miss_Fortune": "Sarah Fortune se cuenta sin duda entre los capitanes más conocidos de Aguas Estancadas y es tan célebre por su apariencia como temida por su ferocidad. Por eso despunta entre los criminales más peligrosos de esta ciudad portuaria. De niña, presenció cómo Gangplank, el rey de los piratas, asesinaba a su familia, una situación de la que se vengó salvajemente años después al hacer saltar por los aires su buque insignia con él a bordo. Todo aquel que la subestime se enfrentará a un oponente seductor e impredecible... y, seguramente, se lleve un par de agujeros de bala de regalo.",
+    "Mordekaiser": "Mordekaiser es un sanguinario señor de la guerra proveniente de tiempos olvidados al que los siglos han visto nacer en tres ocasiones y morir en otras dos. Utiliza sus poderes necrománticos para atar almas perdidas a una vida eterna a su servicio. Ya no quedan muchos que recuerden sus conquistas iniciales o comprendan el alcance de su poder. Aquellos que lo hacen, no obstante, temen con angustia el día en el que regrese para alzarse sobre los vivos y los muertos.",
+    "Naafiri": "A lo largo y ancho de las arenas de Shurima, resuena una amalgama de aullidos. Es la llamada de los sabuesos de las dunas, voraces depredadores que se mueven en manada y luchan por el derecho a cazar en estas yermas tierras. Entre estas manadas, destaca una en concreto, ya que no solo se mueve siguiendo sus instintos, sino porque alberga el poder de los Oscuros.",
+    "Nami": "Nami, una joven y testaruda vastaya marina, fue la primera de la tribu marai en abandonar las olas y aventurarse en tierra firme cuando se rompió el ancestral acuerdo de su tribu con los targonianos. A falta de otra opción, Nami se encargó de completar el ritual sagrado que garantizaría el bienestar de su pueblo. En medio del caos de esta nueva era, Nami se enfrenta a un futuro incierto con agallas y determinación, utilizando su bastón de invocadora de mareas para canalizar la fuerza de los mismos océanos.",
+    "Nasus": "Nasus es un imponente ser Ascendido con cabeza de chacal procedente de la antigua Shurima; una figura heroica a la que las gentes del desierto han encumbrado al nivel de semidiós. Poseedor de una increíble inteligencia, fue un guardián del saber y estratega sin igual cuya sabiduría guio durante siglos al antiguo imperio de Shurima hasta alcanzar la cumbre de su grandeza. Tras la caída del imperio, se sometió a un exilio autoimpuesto, lo que terminó por convertirlo en leyenda. Ahora que la antigua ciudad de Shurima ha resurgido de sus cenizas, su héroe ha regresado para asegurarse de que nunca vuelva a caer.",
+    "Nautilus": "El gigante acorazado Nautilus, una leyenda solitaria tan antigua como los pecios de Aguas Estancadas, recorre las turbias aguas que rodean las costas de las Islas de la Llama Azul. Impulsado por una traición olvidada, ataca con su enorme ancla sin previo aviso para ayudar a los desdichados y arrastrar a los avariciosos a su perdición. Se dice que viene a por los que olvidan pagar el “tributo de Aguas Estancadas”, y se los lleva con él bajo las olas. Un recordatorio inexorable de que nadie se escapa de las profundidades.",
+    "Neeko": "Procedente de una tribu vastaya perdida hace mucho tiempo, Neeko puede fundirse entre la multitud adoptando el aspecto de los demás, incluso es capaz de absorber parte de su estado emocional y así distinguir inmediatamente a amigos y enemigos. Nadie puede estar seguro de dónde está o de quién es Neeko en realidad, pero aquellos que pretendan causarle daño no tardarán en ser testigos de su verdadera forma y sentirán liberarse contra ellos todo el poder de su magia espiritual primordial.",
+    "Nidalee": "Criada en lo más profundo de la jungla, Nidalee es una rastreadora maestra que puede convertirse en un felino feroz a voluntad. No es completamente mujer ni bestia, pero defiende con fiereza su territorio de todos los invasores, con trampas colocadas con cuidado y lanzas arrojadas hábilmente. Se encarga de mutilar a su presa antes de lanzarse sobre ella en forma felina. Los afortunados que sobreviven cuentan historias de una mujer salvaje con unos instintos agudos y unas garras afiladísimas...",
+    "Nilah": "Nilah es una guerrera ascética proveniente de tierras lejanas que busca a los adversarios más mortíferos y gigantescos para poder desafiarlos y destruirlos. Tras obtener sus poderes en un encuentro con el demonio de la alegría, confinado desde hace una eternidad, solo es capaz de experimentar una única emoción: júbilo. Un pequeño precio a pagar a cambio de la gran fuerza que ahora posee. Al canalizar la forma líquida del demonio en una espada con un poder sin parangón, se alza desafiante ante las amenazas ancestrales que cayeron hace mucho en el olvido.",
+    "Nocturne": "El ser conocido como Nocturne es una fusión demoníaca extraída de las pesadillas que acechan a todas las mentes conscientes y se ha convertido en una fuerza primordial de pura maldad. Tiene un aspecto líquido y caótico, una sombra sin rostro con ojos fríos y armada con cuchillas aterradoras. Después de liberarse del reino espiritual, Nocturne descendió al mundo para alimentarse del tipo de terror que solo puede albergar la verdadera oscuridad.",
+    "Nunu": "Había una vez un niño que quería acabar con un temible monstruo para demostrar que era un héroe; pero que terminó descubriendo que la bestia, un yeti solitario y mágico, solo necesitaba un amigo. Ahora, Nunu y Willump, unidos por un poder ancestral y por compartir el amor hacia las bolas de nieve, deambulan por todo Freljord dándole vida a aventuras imaginarias. Y mantienen la esperanza de que ahí fuera, en algún lugar, se encuentra la madre de Nunu, y que darán con ella. Si logran salvarla, puede que se conviertan en los héroes que siempre desearon ser.",
+    "Olaf": "Olaf porta sus hachas de forma que es una fuerza imparable de destrucción que no quiere nada, salvo morir en un combate glorioso. Natural de Lokfar, una brutal península de Freljord, una vez escuchó una profecía que lo avisaba de una muerte tranquila, el destino de un cobarde y un gran insulto entre los suyos. En busca de la muerte y motivado por la ira, arrasó por toda la tierra, acabando con montones de guerreros magníficos y bestias legendarios, en busca de un rival que pudiera detenerlo. Ahora es el sicario de la Garra Invernal y busca su perdición en las grandes guerras que están por llegar.",
+    "Orianna": "Orianna, antaño una chica curiosa de carne y hueso, es ahora una maravilla tecnológica compuesta exclusivamente de engranajes. Cayó gravemente enferma tras un accidente en los distritos inferiores de Zaun y su cuerpo moribundo tuvo que ser reemplazado pieza a pieza con mecanismos de extrema precisión. Con su extraordinaria esfera de metal, que ella misma construyó como medio de protección y compañía, Orianna es hoy libre para explorar las maravillas de Piltover... y más allá.",
+    "Ornn": "Ornn es el espíritu de Freljord de la forja y la artesanía. Trabaja en la soledad de una enorme forja esculpida en las cavernas de lava bajo el volcán de Dulcehogar. En ella modela objetos de calidad sin igual y depura menas en burbujeantes calderos de roca fundida. Cuando otras deidades (sobre todo Volibear) merodean por la tierra y se entrometen en asuntos de mortales, Ornn se ofrece para poner a estos seres impetuosos en su sitio, ya sea con su fiel martillo o con la furia de las mismísimas montañas.",
+    "Pantheon": "Tiempo atrás, Atreus había albergado al Aspecto de la Guerra en su interior contra su voluntad, pero sobrevivió al golpe que acabó con el poder divino y arrancó estrellas del firmamento. Con el paso de los años, aprendió a aceptar el poder de su propia mortalidad y el testarudo aguante que la acompaña. Ahora Atreus se opone a las fuerzas divinas en la piel de un nuevo Pantheon y su voluntad de hierro espolea en el campo de batalla las armas del Aspecto caído.",
+    "Poppy": "En Runaterra hay un gran número de campeones valerosos, pero muy pocos son tan tenaces como Poppy. Esta yordle tan obstinada porta el legendario martillo de Orlon, que la dobla en tamaño, y se ha pasado infinidad de años buscando en secreto al famoso ''héroe de Demacia'' quien, supuestamente, es el legítimo portador de su arma. Mientras tanto, lucha diligentemente en la batalla, haciendo retroceder a los enemigos del reino con cada golpe giratorio.",
+    "Pyke": "A Pyke, un conocido arponero de los Muelles del Matadero de Aguas Estancadas, le esperaba la muerte en el estómago de una gigantesca criatura marina... y sin embargo, regresó. Desde entonces acecha en los fríos y húmedos callejones y caminos de la que fue su ciudad natal, donde usa sus dones sobrenaturales para dar una rápida y truculenta muerte a quienes se ganan la vida explotando a otros. Cómo son las cosas: una ciudad que se enorgullece de cazar monstruos ahora tiene un monstruo que caza a sus habitantes.",
+    "Qiyana": "En la ciudad selvática de Ixaocan, Qiyana se dedica a planear sin clemencia alguna su ascenso al trono de los Yun Tal. Es la última en la línea de sucesión pero planta cara a todo aquel que se interpone en su camino con una confianza arrolladora y un dominio de la magia elemental sin precedentes. La tierra obedece sus órdenes, y Qiyana se considera la elementalista más poderosa de la historia de Ixaocan. Es por eso que, en su opinión, no solo merece la ciudad, sino todo el imperio.",
+    "Quinn": "Quinn es una amazona montaraz de élite de Demacia que emprende peligrosas misiones en territorio enemigo. Ella y su águila legendaria Valor comparten un vínculo inquebrantable, y sus enemigos suelen ser asesinados antes de que puedan darse cuenta de que se están enfrentando no a uno sino a dos de los mejores héroes del reino. Ágil y acrobática cuando la situación lo requiere, Quinn apunta con su ballesta mientras que Valor marca a sus esquivos objetivos desde arriba, lo que convierte a la pareja en un dúo letal en el campo de batalla.",
+    "Rakan": "Con un carácter tan impulsivo como encantador, Rakan es un infame alborotador vastaya y el mejor bailarín de batalla de la historia tribal de Lhotlan. Para los humanos de las montañas de Jonia, su nombre siempre ha sido sinónimo de festivales desenfrenados, fiestas sin control y caos musical. Pocos sospecharían que este artista viajero y dinámico es la pareja de la rebelde Xayah y que también apoya su causa.",
+    "Rammus": "Idealizado por muchos, ignorado por otros, inexplicable para todos, Rammus, el extraño ser, es todo un enigma. Protegido por un armazón de pinchos, inspira teorías cada vez más absurdas sobre sus orígenes allá donde va. Estas pasan por considerarlo un semidiós, un oráculo sagrado y hasta una simple bestia producto de la magia. Sea cual sea la verdad, Rammus se guarda su opinión y no se detiene ante nadie en sus viajes por el desierto de Shurima.",
+    "Rek_Sai": "Rek'Sai, en la cima de la pirámide de los depredadores, es un ente del Vacío despiadado que excava túneles por debajo del terreno para emboscar y devorar a presas ignorantes. Su insaciable hambre ha sembrado la destrucción en regiones enteras del antiguo imperio de Shurima. Mercaderes, comerciantes e incluso caravanas protegidas recorren enormes distancias para evitar los terrenos de caza de la bestia y su prole. Lo único que hay que saber es que, una vez es vista en el horizonte, la muerte desde las profundidades está más que garantizada.",
+    "Rell": "Rell, producto de crueles experimentos a manos de la Rosa Negra, es ahora una intrépida arma viviente decidida a hacer caer Noxus. Su infancia estuvo marcada por la desdicha y el horror, pues se vio sometida a espeluznantes tratamientos para perfeccionar y militarizar sus poderes mágicos de control sobre el metal... hasta que protagonizó una violenta fuga en la que se llevó a muchos de sus captores por delante. Ahora, considerada una criminal, Rell se dedica a atacar a todo soldado noxiano con el que se topa en su afán por encontrar a supervivientes de su antigua ''academia'' y defender a los sumisos e inocentes, mientras acaba violentamente con sus antiguos supervisores.",
+    "Renata": "Renata Glasc resurgió de las cenizas del hogar de su infancia con poco más que su apellido y la investigación alquímica de sus padres. En las siguientes décadas, se convirtió en la baronesa química más rica de Zaun, una gran empresaria que ha cimentado su éxito a base de sacar tajada de los intereses de los demás. Trabajad para ella y se os recompensará enormemente. Trabajad contra ella y os arrepentiréis toda vuestra vida. Pero todo el mundo acaba poniéndose de su parte, más tarde o más temprano.",
+    "Renekton": "Renekton es una terrorífica criatura Ascendida movida por la ira y procedente de los desiertos abrasadores de Shurima. En su día fue el guerrero más admirado del imperio, un líder que condujo a los ejércitos de la nación a incontables victorias. Sin embargo, tras la caída del imperio, Renekton quedó sepultado bajo las arenas, donde lentamente sucumbió a la locura mientras el mundo seguía girando y cambiando. Ahora, libre de nuevo, le carcome el ansia de hallar a su hermano Nasus y acabar con él, pues lo culpa en su locura de los siglos pasados entre las tinieblas.",
+    "Rengar": "Rengar es un feroz cazador de trofeos vastaya que vive por el placer de perseguir y asesinar criaturas peligrosas. Explora el mundo en busca de las bestias más aterradoras, pero, ante todo, quiere encontrar alguna pista que lo lleve hasta Kha'Zix, la criatura del Vacío que le arrebató un ojo. Rengar no acosa a su presa por comida ni por gloria, sino únicamente por la belleza de la persecución.",
+    "Riven": "Antaño maestra de la espada de las huestes de Noxus, Riven es una expatriada en la tierra que previamente había tratado de conquistar. Fue ascendiendo de rango gracias a la fuerza de su convicción y a su brutal eficiencia, y fue recompensada con una espada rúnica legendaria y un escuadrón propio. Sin embargo, en el frente jonio, la fe de Riven en su tierra natal fue puesta a prueba y, finalmente, quebrada. Tras romper todo lazo con el imperio, ahora busca encontrar su lugar en un mundo destrozado, a pesar de que abundan los rumores de que Noxus ha sido reforjado...",
+    "Rumble": "Rumble es un joven inventor con temperamento. Utilizando nada más que sus propias manos y un montón de chatarra, el yordle peleón construyó un traje mecha colosal equipado con un arsenal de arpones electrificados y cohetes incendiarios. Aunque los demás se burlen de sus creaciones de chatarra, a Rumble no le importa; al fin y al cabo, quien tiene un escupellamas es él.",
+    "Ryze": "Ryze es considerado uno de los hechiceros con más experiencia de Runaterra. El archimago ancestral y gruñón lleva sobre sus hombros una pesada carga. Con su constitución sin límites y su inmenso poder arcano, Ryze se pasa la vida buscando incansablemente Runas Geogénicas por el mundo, fragmentos de magia pura que antaño crearon el mundo de la nada. Ryze debe encontrar esos artefactos antes de que caigan en las manos equivocadas, porque sabe que, si fueron usados para crear Runaterra, también tienen el potencial de destruirla.",
+    "Samira": "Samira mira de cara a la muerte con una confianza férrea y busca emociones extremas allá donde va. Tras la destrucción de su hogar en Shurima cuando era una niña, Samira encontró su verdadera vocación en Noxus, donde se ganó la reputación de ser una temeraria con estilo capaz de llevar a cabo las misiones más peligrosas. Armada con pistolas de pólvora negra y con una espada hecha a medida, Samira se alza victoriosa en las circunstancias más imposibles y acaba con cualquiera que se cruce en su camino con certeza y clase.",
+    "Sejuani": "Sejuani es la brutal e implacable comandante hija del hielo de la tribu Garra Invernal, una de las más temidas de Freljord. La supervivencia de su gente es una constante y desesperada lucha contra los elementos, lo que los obliga a asaltar a noxianos, demacianos y avarosanos por igual para soportar los gélidos inviernos. La propia Sejuani lidera la mayoría de estas peligrosas refriegas desde la montura de su jabalí drüvask, Bristle, haciendo uso de su mayal de hielo puro para congelar y hacer añicos a sus enemigos.",
+    "Senna": "La Niebla Negra persigue a Senna desde que era niña, motivo que la llevó a unirse a una orden sagrada conocida como los Centinelas de la Luz y la motivó a luchar ferozmente... hasta que el cruel espectro llamado Thresh la asesinó y encerró su alma en una linterna. Senna nunca perdió la esperanza y aprendió a utilizar la Niebla a su favor desde el interior de la linterna, de la cual emergió para volver a la vida, cambiada para siempre. Ahora, blande tanto la oscuridad como la luz y busca poner fin a la Niebla Negra combatiendo el fuego con fuego: con cada disparo de su arma reliquia redime a las almas perdidas que deambulan en su interior.",
+    "Seraphine": "Seraphine, de padres zaunitas, nació en Piltover y es capaz de escuchar las almas de los demás. El mundo le canta y ella le devuelve la canción. Aunque esos sonidos le resultaban abrumadores cuando era pequeña, ahora le sirven de inspiración, y transforma el caos en una sinfonía. Actúa para ambas ciudades con la intención de recordarles a sus ciudadanos que no están solos, que la unión hace la fuerza y que, a los ojos de Seraphine, su potencial es infinito.",
+    "Sett": "Sett es una prominente figura en los emergentes círculos criminales jonios, que aseguró su posición al inicio de la guerra con Noxus. A pesar de sus humildes comienzos como luchador en el foso de Navori, no tardó en labrarse una reputación con la ayuda de su desmesurada fuerza y su capacidad para aguantar palizas terribles. Tras abrirse paso entre los contendientes locales, Sett reina ahora por la fuerza en el foso en el que antes luchaba.",
+    "Shaco": "Shaco fue fabricado hace mucho tiempo para entretener a un príncipe solitario, pero ahora la marioneta encantada se regocija en la muerte y el caos. El otrora adorable muñeco fue corrompido por magia oscura y por la pérdida de su amado dueño, de modo que ahora solo se recrea en el dolor de las pobres almas que atormenta. Shaco emplea juguetes y trucos sencillos con efectos devastadores y se regodea con los resultados de sus sanguinarias ocurrencias. Si alguna vez oís una risita misteriosa en mitad de la noche, puede que el bufón siniestro os haya elegido como la siguiente víctima de su macabra diversión.",
+    "Shen": "Shen, el Ojo del Crepúsculo, es el cabecilla de los sigilosos guerreros de Jonia conocidos como Kinkou. Su objetivo es mantenerse libre de las ataduras de cualquier emoción, prejuicio o ego, y avanza por el camino invisible del juicio desapasionado, entre el reino espiritual y el mundo físico. La tarea de Shen reside en hacer cumplir el equilibrio entre ambos mundos, y hará uso de sus espadas de acero y energía arcana ante todo aquel que ose amenazar dicha armonía.",
+    "Shyvana": "Shyvana es una criatura con la magia de un fragmento de runa incandescente alojada en lo más profundo de su corazón. Pese a que su aspecto más común es el de humana, su verdadera forma es la de una feroz dragona capaz de reducir a sus enemigos a cenizas con su aliento ígneo. Tras salvar la vida del príncipe de la corona, Jarvan IV, Shyvana comenzó a formar parte de su guardia real, en la que sirve inquieta ante la dificultad de ser aceptada por las recelosas gentes de Demacia.",
+    "Singed": "Singed es un brillante alquimista de cuestionable moralidad cuyos experimentos le revolverían el estómago hasta al criminal más despiadado. Pone sus habilidades al servicio del mejor postor, y le es indiferente el uso que se le dé a sus malvadas creaciones; pues el caos resultante supone un experimento en sí mismo. Su creación más infame es el shimmer, una sustancia que ha permitido a los barones químicos convertir Zaun en su campo de juego, donde ahora reina el caos. Singed siempre está trabajando en inventos nuevos, y cada uno es más depravado que el anterior...",
+    "Sion": "Sion fue un héroe de guerra en el pasado y los noxianos lo veneraban porque había arrebatado la vida de un rey demaciano con sus simples manos. No obstante, se le denegó su viaje al más allá, pues fue revivido para servir a su imperio incluso después de muerto. Sus masacres indiscriminadas se sucedieron contra todos aquellos que se interpusieran en su camino, sin importar su facción, lo que demostró que ya no quedaba ni rastro de humanidad en su interior. Pese a todo, Sion lucha desenfrenadamente provisto únicamente de una armadura remachada a su piel putrefacta, pugnando por recordar su verdadero yo entre hachazo y hachazo.",
+    "Sivir": "Sivir es una afamada buscadora de tesoros y capitana mercenaria que se gana la vida en el desierto de Shurima. Provista de un arma legendaria en forma de cruz engastada con gemas, ha librado y ganado innumerables batallas para aquellos que pueden permitirse su exorbitante precio. Conocida por su determinación temeraria y por una ambición sin fin, se jacta de poder recuperar los tesoros enterrados de las peligrosas tumbas de Shurima... a cambio de una generosa recompensa. Ahora que unas fuerzas ancestrales agitan los mismísimos cimientos de Shurima, Sivir se encuentra dividida entre destinos opuestos.",
+    "Skarner": "A Skarner, el colosal brackern ancestral, se le rinde culto en Ixtal como uno de los fundadores de su casta soberana, los Yun Tal. Se dedica a proteger su tierra del resto del mundo manteniendo la región aislada. Skarner vive en una cámara bajo Ixaocan, donde oye las vibraciones de la tierra y detecta posibles amenazas. Ahora que más miembros de los Yun Tal empiezan a cuestionar el aislamiento autoimpuesto de Ixtal, Skarner está cada vez más paranoico, y hará lo que sea por mantener a salvo tanto Ixtal como a sus habitantes... a cualquier precio.",
+    "Smolder": "Oculto entre los escarpados acantilados de la frontera noxiana y bajo la atenta mirada de su madre, un joven dragón está aprendiendo qué implica ser el heredero del linaje imperial de los dragones camavoranos. Juguetón y ansioso por crecer, Smolder busca cualquier excusa para poner a prueba sus precoces habilidades. Aunque sigue siendo una cría, su poder no es moco de pavo, pues es capaz de reducir a cenizas casi cualquier cosa en un santiamén.",
+    "Sona": "Sona es la artista más virtuosa de Demacia con el etwahl de cuerda y solo se comunica a través de sus elegantes acordes y vibrantes melodías. Esta refinada actitud le ha hecho ganarse el favor de la alta sociedad, aunque los hay que sospechan que sus fascinantes notas emanan auténtica magia, un tabú en la cultura demaciana. Silenciosa para los extraños pero comprendida por sus íntimos, Sona puntea sus armonías con el objetivo de curar a sus aliados heridos y acabar con enemigos confiados.",
+    "Soraka": "Soraka, una nómada proveniente de las dimensiones celestiales más allá del monte Targon, dejó a un lado su inmortalidad para proteger a las razas mortales de sus propios instintos asesinos. Su cometido es difundir las virtudes de la compasión y la misericordia entre todos los seres con los que se cruza, e incluso sanar a aquellos que desean hacerle daño. Pese a los problemas que ha presenciado Soraka hasta la fecha, sigue creyendo firmemente que los pueblos de Runaterra no han alcanzado todo su potencial.",
+    "Swain": "Jericho Swain es el visionario líder de Noxus, una nación expansionista que solo venera la fuerza. Pese a haber sido relegado y a haber perdido el brazo izquierdo en las guerras de Jonia, se hizo con el control del imperio con una despiadada determinación... y una nueva mano demoníaca. En la actualidad, Swain lidera el frente y carga contra la oscuridad que se avecina, una oscuridad que solo él puede ver en los destellos que recogen los cuervos sombríos de los cadáveres a su alrededor. En medio de una espiral de sacrificio y misterio, el mayor de los secretos es que el verdadero enemigo reside en su interior.",
+    "Sylas": "Sylas de Dregbourne, originario de uno de los barrios más pobres de Demacia, llega como símbolo del lado más oscuro de la gran ciudad. De niño, su potencial para hallar la brujería oculta llamó la atención de los cazadores de magos más prestigiosos, quienes terminaron encarcelándolo por emplear esos mismos poderes contra ellos. Ahora que es libre, Sylas lleva una vida propia de un revolucionario curtido: utiliza la magia de los que están a su alrededor para destruir el reino al que una vez sirvió… y su pandilla de magos proscritos parece que crece cada día más.",
+    "Syndra": "Syndra es una temible maga jonia con un poder increíble a su disposición. De niña, inquietó a los ancianos del lugar con su imprudente y tempestuosa magia. La enviaron a que aprendiera a controlarla mejor, pero al final descubrió que su supuesto mentor estaba refrenando sus habilidades. Syndra, cuyos sentimientos de traición y dolor originan esferas oscuras de energía, ha jurado destruir a todos los que intenten controlarla.",
+    "Tahm_Kench": "Tahm Kench, al que se le han atribuido diferentes nombres a lo largo de la historia, es un demonio que viaja por los canales de Runaterra colmando su insaciable apetito con las desgracias ajenas. Pese a que pueda parecer cautivador y orgulloso, se pavonea por el mundo físico como un vagabundo en busca de una presa incauta. Su lengua, poderosa como un látigo, es capaz de aturdir incluso a un guerrero pesado desde varios metros de distancia; caer en su ruidoso estómago implica precipitarse a un abismo del que no hay esperanza de regresar.",
+    "Taliyah": "Taliyah es una hechicera nómada de Shurima desgarrada entre la curiosidad de una adolescente y la responsabilidad de una adulta. Ha atravesado Valoran de un lado a otro para descubrir la auténtica naturaleza de sus crecientes poderes, aunque recientemente ha tenido que regresar para proteger a su tribu. Algunos han confundido su compasión con debilidad y han pagado muy caro su error, pues bajo la actitud juvenil de Taliyah se oculta una voluntad capaz de mover montañas y un espíritu lo bastante feroz para hacer que tiemble la mismísima tierra.",
+    "Talon": "Talon es el cuchillo de la oscuridad, un asesino despiadado capaz de atacar sin previo aviso y huir antes de que salte alarma alguna. Logró granjearse una peligrosa reputación en las terribles calles de Noxus, donde se vio obligado a luchar, matar y robar para sobrevivir. Talon, adoptado por la ilustre familia Du Couteau, ejerce ahora su letal profesión a las órdenes del imperio, asesinando líderes, capitanes y héroes rivales, además de noxianos lo bastante osados como para atraerse la enemistad de sus dirigentes.",
+    "Taric": "Taric es el Aspecto del Protector, y gracias a su increíble poder es el guardián de la vida, el amor y la belleza en Runaterra. Caído en desgracia debido a la negligencia de su deber y exiliado de su hogar, Demacia, Taric ascendió al Monte Targon buscando la redención, y lo que encontró en la cima fue la llamada de las estrellas. Imbuido con el poder del Targon ancestral, el Escudo de Valoran no descansa en su deber de vigilar la traicionera corrupción del Vacío.",
+    "Teemo": "Sin inmutarse siquiera por los obstáculos más peligrosos y amenazantes, Teemo explora el mundo con un entusiasmo infinito y una alegría desbordante. Con un inquebrantable sentido de la moralidad, este yordle se enorgullece de seguir el Código de los Exploradores de Bandle, a veces con tal afán que no es consciente de las consecuencias de sus acciones. Aunque algunos dicen que la existencia de los Exploradores es cuestionable, una cosa es cierta: la convicción de Teemo no es para tomarla a broma.",
+    "Thresh": "El sádico y astuto Thresh es un ambicioso y obstinado espectro de las Islas de la Sombra. Otrora guardián de innumerables secretos arcanos, acabó sucumbiendo a un poder por encima de la vida y la muerte. Ahora sobrevive torturando a sus víctimas con prolongados e inimaginables tormentos. Un último suspiro no significa el fin del sufrimiento, pues Thresh siembra la agonía en sus almas y las aprisiona en su nefasta linterna para torturarlas durante toda la eternidad.",
+    "Tristana": "Pese a que la mayoría de los yordles canalizan sus energías hacia el descubrimiento, la invención o simples trastadas, Tristana siempre se ha visto inspirada por las aventuras de los grandes guerreros. Siempre ha escuchado las historias de Runaterra, sus facciones y sus guerras, y considera que los de su especie también podrían ser dignos de aparecer en las leyendas. Desde que puso pie en tierra por primera vez provista de su fiel cañón Boomer, Tristana se zambulle en las batallas con firmeza y optimismo.",
+    "Trundle": "Trundle es un trol retorcido y colosal con una personalidad despiadada. No hay nada que no sea capaz de someter a base de mazazos, ni siquiera el propio Freljord. Su tremendo instinto territorial lo mueve a perseguir a todo aquel lo bastante osado como para aventurarse en sus dominios. Cuando blande su tremendo garrote de hielo puro, este deja a los enemigos helados hasta los huesos y los atraviesa con afilados pilares congelados. Después, se mofa mientras estos se desangran en la fría tundra.",
+    "Tryndamere": "Impulsado por una furia y una rabia desenfrenadas, Tryndamere solía abrirse paso por Freljord desafiando abiertamente a los mejores guerreros del norte con el objetivo de prepararse para días aún más oscuros. El furioso bárbaro lleva una eternidad clamando venganza, desde que aniquilaron a su clan al completo. No obstante, ha encontrado recientemente una compañera en Ashe, la comandante avarosana, y un nuevo hogar con su pueblo. Su poder y fortaleza casi inhumanos son legendarios, lo que les ha supuesto a él y a sus nuevos aliados incontables victorias cuando peor pintaban las cosas.",
+    "Twisted_Fate": "Twisted Fate es un tahúr y timador de mala reputación que ha viajado por buena parte del mundo conocido, granjeándose con su encanto y su habilidad con los naipes la admiración y la enemistad de ricos y necios por igual. Raras veces se toma las cosas con seriedad y afronta cada día con sonrisa burlona y actitud despreocupada. En todos los sentidos imaginables, Twisted Fate siempre se guarda un as en la manga.",
+    "Twitch": "Rata de la peste zaunita por nacimiento y apasionado experto de la suciedad por afición, a Twitch no le preocupa ensuciarse las zarpas. Con su ballesta de cualidades químicas apuntando al corazón hipócrita de Piltover, se ha jurado demostrar a los ciudadanos de la superficie lo mugrientos que son en realidad. Un ser del todo escurridizo que cuando no anda revolviendo en el Sumidero se encuentra rebuscando entre la basura de la gente al acecho de tesoros olvidados... y quizá de un sándwich mohoso.",
+    "Udyr": "Udyr, el caminante espiritual más poderoso de la actualidad, comulga con todos los espíritus de Freljord, ya sea comprendiendo sus necesidades empáticamente o canalizando su energía etérea para transformarla y aplicarla a su propio y primigenio estilo de lucha. Busca el equilibrio en su interior para que su mente no se pierda entre las demás; sin embargo, también lo busca en su exterior, dado que el panorama místico freljordiano solo puede prosperar con el crecimiento que acarrean los conflictos y dificultades, y Udyr sabe perfectamente que es necesario hacer sacrificios para mantener a raya el estancamiento de la paz.",
+    "Urgot": "Urgot, antiguo verdugo noxiano, fue traicionado por el imperio por el que había matado a tantos. Amarrado con cadenas de hierro, se vio obligado a aprender el verdadero significado de la fuerza en la Draga; una mina penitenciaria en las profundidades de Zaun. Surgido en medio de un desastre que propagó el caos por la ciudad, ahora proyecta una imponente sombra sobre el inframundo delictivo. Alza a sus víctimas con las mismas cadenas que una vez lo esclavizaron; aspira a purgar su nuevo hogar de los indignos y convertirlo en un crisol de dolor.",
+    "Varus": "Como uno de los antiguos oscuros Varus era un asesino despiadado al que le encantaba torturar a sus enemigos hasta las puertas de la locura antes de atravesarlos con una flecha letal. Fue apresado y encarcelado al final de la gran Guerra Oscura, pero escapó siglos más tarde en el envoltorio carnal que obtuvo con los cuerpos de dos cazadores jonios. Estos le habían liberado inconscientemente, condenados así a cargar con el arco que contiene su propia esencia. Varus busca ahora a aquellos que lo apresaron para que conozcan su terrible venganza, pero las almas de los mortales en su interior todavía se resisten a cada paso que da.",
+    "Vayne": "Shauna Vayne es una cazadora de monstruos demaciana letal y despiadada que ha dedicado su vida a buscar y destruir al demonio que asesinó a su familia. Provista de una ballesta que lleva en la muñeca y un corazón ansioso de venganza, Vayne solo es verdaderamente feliz cuando mata a practicantes de las artes oscuras o a sus creaciones, golpeando desde las sombras con una ráfaga de proyectiles de plata.",
+    "Veigar": "Entusiasta maestro de la magia negra, Veigar ha hecho suyos poderes a los que pocos mortales se atreven a acercarse. Como espíritu de Ciudad de Bandle, buscó durante mucho tiempo deshacerse de las limitaciones de la magia yordle, así que su atención se posó sobre unos textos arcanos que habían estado escondidos durante siglos. Ahora, dada su terquedad y su curiosidad infinita por los misterios del universo, Veigar es menospreciado a menudo pero, aunque él se ve a sí mismo como una fuerza del mal, posee una moral interior que lleva a algunos a cuestionar sus motivaciones ulteriores.",
+    "VelKoz": "No es seguro que Vel'Koz sea el primer ente del Vacío que ha aparecido en Runaterra, pero no ha habido ningún otro con su nivel de crueldad y conciencia calculadora. Mientras que los de su especie devoran y profanan todo cuanto encuentran, él busca el escrutinio y el estudio del reino físico, así como los extraños y belicosos seres que lo habitan, con el fin de encontrar cualquier debilidad que el Vacío pueda aprovechar. Pero Vel'Koz está lejos de ser un observador pasivo: se defiende de las amenazas con plasma letal y altera el propio tejido del mundo.",
+    "Vex": "En el oscuro corazón de las Islas de la Sombra, una yordle solitaria atraviesa arduamente la bruma espectral, satisfecha con su tenebrosa miseria. Con una angustia adolescente inagotable y una poderosa sombra tras de sí, Vex vive en un planeta de pesimismo creado por ella misma, lejos de la repugnante alegría del mundo de la gente aburrida. A pesar de su falta de ambición, acaba rápidamente con el color y la felicidad, y puede pararle los pies a cualquier posible intruso con su miserable magia.",
+    "Vi": "Vi, criada en las perversas calles de Zaun, es una mujer impulsiva y temeraria con muy poco respeto por la autoridad. Siempre ha sido una superviviente nata, gracias a su problemática juventud en Piltover y su injustamente larga reclusión en la Penitenciaría Aguaserena. Ahora trabaja con los agentes de Piltover para mantener la paz en vez de acabar con ella. Se vale de sus poderosos guanteletes hextech, que pueden atravesar tanto paredes como a criminales con la misma facilidad.",
+    "Viego": "Viego, soberano de un reino antaño desaparecido, murió hace más de mil años cuando su intento por devolverle la vida a su esposa desencadenó una catástrofe mágica conocida como la Ruina. Ahora, trasformado en un poderoso espectro atormentado por el anhelo obsesivo de recuperar a su reina fallecida siglos atrás, Viego se alza como el Rey Arruinado, capaz de controlar los letales Harrowings. Mientras barre Runaterra en busca de algo que pueda traer de vuelta a su amada, destruye todo a su paso con la Niebla Negra, que emana incesablemente de su cruel corazón roto.",
+    "Viktor": "Gracias a la evolución biomecánica de su antiguo yo, Viktor se ha entregado en cuerpo y alma a su gloriosa evolución, convirtiéndose en una especie de mesías a ojos de sus fieles. Sacrificó su propia humanidad siguiendo la lógica de que, si eliminaba todo tipo de sentimientos, dejaría de sufrir. Ahora, busca poner en conocimiento de todo el mundo el hallazgo del núcleo hex, aunque nadie sea capaz de comprender sus beneficios. Al fin y al cabo, para este maestro de lo arcano, la violencia no es más que una variable necesaria para equilibrar la ecuación definitiva.",
+    "Vladimir": "Un demonio con sed de sangre mortal, Vladimir ha influido en el destino de Noxus desde los primeros días del imperio. Además de alargar su vida de forma sobrenatural, su amplio conocimiento de la hemomancia le posibilita controlar el cuerpo y la mente de otros como propios. Esto le ha permitido construir un culto fanático a su personalidad en los pomposos salones de la aristocracia noxiana... mientras drena la sangre de sus enemigos en callejones oscuros y recónditos.",
+    "Volibear": "Para aquellos que aún lo veneran, Volibear es la encarnación de la tormenta. Destructivo, salvaje y decidido, existe desde antes de que los mortales pusieran pie en las tundras de Freljord y protege con fiereza las tierras que creó junto a sus hermanos semidioses. Ha desarrollado un profundo odio por la civilización y la debilidad que, a sus ojos, ha traído consigo, y lucha para regresar a las costumbres de antaño, cuando la tierra era salvaje y la sangre fluía sin reparos. Con sus dientes, sus garras y su atronadora presencia, acaba con todo aquel que se oponga a su visión.",
+    "Warwick": "Warwick es un monstruo que acecha en los grises callejones de Zaun. Los atroces experimentos a los que fue sometido transformaron su cuerpo, que ahora está fusionado con un intricado sistema de bombas y una maquinaria que llena sus venas de furia alquímica. Aprovecha las sombras para abalanzarse sobre los criminales que aterrorizan la ciudad y darles caza. Warwick se siente atraído por la sangre; su aroma lo hace enloquecer. Nadie que la derrame podrá huir de él.",
+    "Wukong": "Wukong es un embaucador vastaya que se vale de su fuerza, agilidad e inteligencia para confundir a sus oponentes y conseguir ventaja. Tras forjar una amistad para toda la vida con el guerrero conocido como el Maestro Yi, Wukong se convirtió en el último pupilo del arte marcial llamado Wuju. Armado con un bastón encantado, Wukong pretende evitar la caída en desgracia de Jonia.",
+    "Xerath": "Xerath es un mago Ascendido de la vieja Shurima, un ser con energía arcana retorciéndose en los quebrados fragmentos de un sarcófago mágico. Durante milenios estuvo atrapado bajo las arenas del desierto, pero el ascenso de Shurima lo liberó de su prisión ancestral. Arrastrado a la locura por el poder, ahora busca recuperar lo que cree que le pertenece y reemplazar las civilizaciones soberbias del mundo con una diseñada a su imagen y semejanza.",
+    "Xin_Zhao": "Xin Zhao es un guerreo decidido y valiente, leal a la dinastía Escudo de Luz. En su momento fue condenado a los fosos noxianos, en los que sobrevivió a incontables batallas de gladiadores. Pero, tras ser liberado por las fuerzas demacianas, entregó su vida con devoción a sus libertadores. Armado con su lanza de tres puntas, Xin Zhao lucha ahora por su reino adoptivo, desafiando con audacia a cualquier enemigo sin importar su fuerza.",
+    "Yasuo": "Yasuo, un intrépido jonio con una fuerza de voluntad inquebrantable, es también un hábil espadachín capaz de controlar el viento y utilizarlo contra sus enemigos. Siendo un joven orgulloso fue injustamente acusado de asesinar a su maestro. Incapaz de demostrar su inocencia, se vio obligado a acabar con la vida de su propio hermano en defensa propia. Incluso después de que el verdadero asesino de su maestro saliera a la luz, Yasuo no ha podido perdonarse a sí mismo por todo lo que ha hecho y ahora deambula por su tierra natal con el viento como único guía de su espada.",
+    "Yone": "En vida, fue Yone, hermanastro de Yasuo y pupilo de renombre en la escuela de esgrima de su aldea. No obstante, al morir a manos de su hermano, se vio perseguido por una maligna entidad del reino espiritual y acabó por asesinarlo con su propia espada. Ahora, obligado a portar la máscara demoníaca de esa entidad, Yone da caza a todas las criaturas similares para así conseguir entender un poco mejor en qué se ha convertido.",
+    "Yorick": "Yorick, último superviviente de una orden religiosa olvidada hace tiempo, carga con la bendición y la maldición de controlar a los muertos. Dado que está atrapado en las Islas de la Sombra, sus únicos compañeros son cadáveres en descomposición y los espectros aullantes que atrae. Los monstruosos actos de Yorick responden a un noble propósito: liberar su hogar de la maldición de la Ruina.",
+    "Yuumi": "Yuumi, una gata mágica de Ciudad de Bandle, fue antaño la compañera de una hechicera yordle, Norra. Tras la misteriosa desaparición de su maestra, Yuumi se convirtió en la guardiana del Libro de umbrales de Norra, un objeto sintiente cuyas páginas contienen portales por los que la gata va en su búsqueda. Falta de cariño, Yuumi se busca amigos con los que compartir su aventura y los protege con escudos luminosos y una determinación inquebrantable. Pese a los intentos de Libro de mantenerla concentrada, Yuumi suele distraerse con las comodidades mundanas, como las siestas y el pescado. Sin embargo, al final siempre retoma la misión de encontrar a su maestra.",
+    "Zac": "Zac es el resultado de un vertido tóxico que recorría una veta tecnoquímica y fue a parar a una profunda caverna apartada en el Sumidero de Zaun. A pesar de sus humildes orígenes, Zac ha pasado de ser un flujo primitivo a un ser pensante que habita en las cañerías de la ciudad y que, de vez en cuando, abandona su morada para ayudar a los más desvalidos o reconstruir las infraestructuras destruidas de Zaun.",
+    "Zed": "Zed, despiadado y nada compasivo, es el líder de la Orden de la Sombra, una organización que él mismo creó con el propósito de militarizar las tradiciones marciales y mágicas de Jonia para expulsar a los invasores noxianos. Durante la guerra, la desesperación lo llevó a desbloquear la forma secreta de las sombras, un espíritu mágico tan peligroso y corrupto como poderoso. Zed ha dominado todas las técnicas prohibidas para destruir todo aquello que amenace a su nación o a su nuevo orden.",
+    "Zeri": "Una joven testaruda y llena de vida de la clase trabajadora de Zaun. Zeri canaliza su magia eléctrica para cargarse a sí misma y su fusil personalizado. Su volátil poder canaliza sus emociones, y sus chispas se inspiran en su veloz estilo de vida. Compasiva con todo aquel que la rodea, Zeri pone todo el amor de su familia y su hogar en cada combate. Aunque su entusiasmo a veces le puede jugar una mala pasada, Zeri tiene una verdad absoluta: si das la cara por tu comunidad, tu comunidad luchará a tu lado.",
+    "Ziggs": "Gran amante de las bombas grandes y las mechas cortas, el yordle Ziggs es una explosiva fuerza de la naturaleza. Trabajaba como ayudante de un inventor en Piltover, pero, cansado de llevar una vida tan aburrida y monótona, decidió hacerse amigo de una bombardera peliazul llamada Jinx. Tras una noche salvaje en la ciudad, Ziggs siguió el consejo de la chica y se trasladó a Zaun, donde ahora explora su fascinación con mucha más libertad, aterrorizando barones químicos y ciudadanos de Zaun por igual en una aventura sin fin para reventar lo que se le ponga por delante.",
+    "Zilean": "Zilean, el que un día fuera un poderoso mago de Icathia, se obsesionó con el paso del tiempo tras ser testigo de la destrucción de su tierra natal a manos del Vacío. Incapaz de parar un minuto a llorar tan catastrófica pérdida, se entregó a la vetusta magia temporal para descubrir todos los resultados posibles. Tras volverse prácticamente inmortal, Zilean viaja por el pasado, el presente y el futuro, deformando y retorciendo el flujo temporal que lo rodea, siempre en busca del preciso instante al que poder volver para evitar la destrucción de Icathia.",
+    "Zoe": "Como personificación de la travesura, de la imaginación y del cambio, Zoe es la mensajera cósmica de Targon y anuncia acontecimientos importantes que remodelan mundos. Su mera presencia distorsiona las matemáticas arcanas que gobiernan las realidades y a veces provoca cataclismos sin intención ni malicia. Puede que eso explique el aire de indiferencia con el que Zoe aborda sus responsabilidades, lo que le da el tiempo suficiente para dedicarse a jugar, a gastar bromas a los mortales o, simplemente, a divertirse. Un encuentro con Zoe puede ser dichoso y alentador, pero siempre implica más de lo que parece y suele resultar extremadamente peligroso.",
+    "Zyra": "Nacida gracias a un fenómeno sobrenatural hace mucho tiempo, Zyra encarna la ira de la naturaleza: un seductor híbrido entre planta y humano que da lugar a nueva vida a cada paso. Ve a los mortales de Valoran como poco más que presas para su progenie, y lo único que busca es matarlos con ráfagas de espinas mortales. Aunque no se ha revelado su verdadero propósito, Zyra deambula por el mundo satisfaciendo sus instintos de colonización y erradicando cualquier otro tipo de vida.",
+  };
+
+  document.getElementById("modalImg").src = `img/personajes/${name}.jpg`;
+  document.getElementById("modalName").textContent = name.replaceAll("_"," ");
+  document.getElementById("modalLore").textContent = lore[name] || "Historia próximamente.";
+
+  document.getElementById("champModal").style.display = "flex";
+}
+function closeModal(){
+  document.getElementById("champModal").style.display = "none";
+}
+document.getElementById("champModal").addEventListener("click", function(e){
+  if(e.target.id === "champModal"){
+    closeModal();
+  }
+});
+
+</script>
+
+<!-- ===== JAVASCRIPT: REGIONES DE RUNATERRA Y SUS MODALES ===== -->
+<script>
+// Carga los datos de cada región y abre un modal al hacer clic en su tarjeta,
+// mostrando su descripción y un carrusel de imágenes.
+document.addEventListener("DOMContentLoaded", function() {
+
+const regiones = {
+  freljord: {
+    titulo: "Freljord",
+    texto: "Las tribus de Freljord hacen gala de un orgullo y una independencia feroces, aunque sus vecinos de Valoran suelen considerarlos salvajes, brutos e incluso primitivos, dado que desconocen las tradiciones ancestrales que los moldearon. Hace miles de años, la alianza entre las hermanas Avarosa, Serylda y Lissandra se deshizo en una guerra que amenazó la existencia de toda Runaterra y sumió las islas del norte en un invierno incesante y caótico. ",
+    imagenes: [
+      "img/imagenes_regiones_2/Freljord.png",
+      "img/imagenes_regiones_2/Freljord2.png",
+      "img/imagenes_regiones_2/Freljord3.png",
+    ]
+  },
+
+  demacia: {
+    titulo: "Demacia",
+    texto: "La capital, la Gran ciudad de Demacia, se fundó para servir como refugio de la magia tras la pesadilla que supusieron las Guerras Rúnicas y se blindó con petricita, un tipo de piedra blanca muy inusual que absorbe la energía mágica. Desde entonces, la familia real quedó al cargo de la defensa de los pueblos, ciudades, tierras, bosques y montañas circundantes, unos territorios muy ricos en recursos minerales.",
+    imagenes: [
+      "img/imagenes_regiones_2/Demacia.png",
+      "img/imagenes_regiones_2/Demacia2.png",
+      "img/imagenes_regiones_2/Demacia3.png"
+    ]
+  },
+
+  noxus: {
+    titulo: "Noxus",
+    texto: "Los Noxii fueron unas tribus bárbaras temibles hasta que invadieron la ciudad ancestral que hoy en día es el corazón de sus dominios. Amenazados por todos los bandos, decidieron llevar la lucha a terreno enemigo, y cada año sus fronteras avanzan más y más. Esta lucha por la supervivencia ha convertido a los noxianos actuales en personas orgullosas que valoran la fuerza por encima de todo lo demás, aunque la fuerza se puede manifestar de formas muy distintas.",
+    imagenes: [
+      "img/imagenes_regiones_2/Noxus.png",
+      "img/imagenes_regiones_2/Noxus2.png",
+      "img/imagenes_regiones_2/Noxus3.png"
+    ]
+  },
+
+  jonia: {
+    titulo: "Jonia",
+    texto: "El equilibrio es una de las piedras angulares de la cultura jonia, por lo que los límites que separan el mundo material del espiritual son aquí más difusos que en el resto de Runaterra, especialmente en las profundidades de sus bosques y lo alto de sus cumbres.",
+    imagenes: [
+      "img/imagenes_regiones_2/Jonia.png",
+      "img/imagenes_regiones_2/Jonia2.png",
+      "img/imagenes_regiones_2/Jonia3.png"
+    ]
+  },
+
+  piltover: {
+    titulo: "Piltover",
+    texto: " Su poder no es de carácter militar, sino comercial y emprendedor. Situado en los acantilados que lo separan de Zaun por el océano, Piltover acoge a flotas enteras de barcos mercantiles que cruzan las gigantes puertas marítimas para traer bienes provenientes del resto del mundo. Esta riqueza ha provocado un crecimiento sin precedentes en la ciudad. ",
+    imagenes: [
+      "img/imagenes_regiones_2/Piltover.png",
+      "img/imagenes_regiones_2/Piltover2.png",
+      "img/imagenes_regiones_2/Piltover3.png"
+    ]
+  },
+
+  zaun: {
+    titulo: "Zaun",
+    texto: "La poca luz que llega lo hace filtrada a través del humo generado en una maraña de tuberías, pues Zaun destaca por su arquitectura gris e industrial. En el pasado Zaun y Piltover estaban unidos. A pesar de que ahora están separadas, ambas sociedades mantienen una relación simbiótica. Zaun vive en un constante crepúsculo de niebla y humo, pero sus gentes continúan desarrollando su dinámica cultura.",
+    imagenes: [
+      "img/imagenes_regiones_2/Zaun.png",
+      "img/imagenes_regiones_2/Zaun2.png",
+      "img/imagenes_regiones_2/Zaun3.png"
+    ]
+  },
+
+  aguas: {
+    titulo: "Aguas Estancadas",
+    texto: "Alberga cazadores de serpientes, bandas portuarias y contrabandistas de todas partes del mundo. Aquí se puede hacer una fortuna en un instante, y los sueños de cualquiera pueden quedar hechos añicos con la misma rapidez. Para quienes huyen de la justicia, las deudas o son perseguidos, Aguas Estancadas es una ciudad para comenzar de nuevo; a nadie le importa tu pasado en sus retorcidas calles. ",
+    imagenes: [
+      "img/imagenes_regiones_2/aguas estancadas.png",
+      "img/imagenes_regiones_2/aguas estancadas2.png",
+      "img/imagenes_regiones_2/aguas estancadas3.png"
+    ]
+  },
+
+  islas: {
+    titulo: "Islas de la Sombra",
+    texto: "Hubo una época en la que estas tierras acogieron a una civilización noble y cultivada conocida por sus aliados y emisarios como las Islas Bendecidas. Sin embargo, hace más de mil años, un cataclismo mágico sin precedentes hizo añicos la barrera que protegía el reino material del espiritual y lo convirtió en uno solo... lo que condenó a todos los seres vivos al instante.",
+    imagenes: [
+      "img/imagenes_regiones_2/Islas de la Sombra.png",
+      "img/imagenes_regiones_2/Islas de la Sombra2.png",
+      "img/imagenes_regiones_2/Islas de la Sombra3.png"
+    ]
+  },
+
+  shurima: {
+    titulo: "Shurima",
+    texto: "Los poderosos dioses guerreros de la Hueste Ascendida fueron los encargados de fraguarlo, y reunían a las poblaciones dispares del sur obligándolas a convivir en paz, Muy pocos osaron rebelarse. Los que lo hicieron, como la nación maldita de Icathia, fueron aniquilados sin piedad alguna.",
+    imagenes: [
+      "img/imagenes_regiones_2/Shurima.png",
+      "img/imagenes_regiones_2/Shurima2.png",
+      "img/imagenes_regiones_2/Shurima3.png"
+    ]
+  },
+
+  targon: {
+    titulo: "Targon",
+    texto: "Lejos de la civilización, la ubicación del monte Targon es remota e imposible de encontrar para todos salvo para los buscadores con más determinación. Son muchas las leyendas relacionadas con el monte Targon y, como tal, es un faro para los soñadores, los locos y los aventureros.",
+    imagenes: [
+      "img/imagenes_regiones_2/Targon.png",
+      "img/imagenes_regiones_2/Targon2.png",
+      "img/imagenes_regiones_2/Targon3.png"
+    ]
+  }
+
+};
+
+const modal = document.getElementById("regionModal");
+const cerrarBtn = document.querySelector(".cerrar");
+
+document.querySelectorAll(".region-card").forEach(card => {
+  card.addEventListener("click", function() {
+
+    const region = this.getAttribute("data-region");
+    const data = regiones[region];
+
+    if (!data) return;
+
+    document.getElementById("modalTitulo").textContent = data.titulo;
+    document.getElementById("modalTexto").textContent = data.texto;
+
+    document.getElementById("img1").src = data.imagenes[0];
+    document.getElementById("img2").src = data.imagenes[1];
+    document.getElementById("img3").src = data.imagenes[2];
+
+    modal.style.display = "block";
+  });
+});
+
+cerrarBtn.addEventListener("click", function() {
+  modal.style.display = "none";
+});
+
+window.addEventListener("click", function(e) {
+  if (e.target === modal) {
+    modal.style.display = "none";
+  }
+});
+
+});
+</script>
+<div class="modal" id="regionModal">
+  <div class="modal-content">
+    <span class="cerrar">&times;</span>
+    <h2 id="modalTitulo"></h2>
+
+    <div class="modal-slider">
+      <img id="img1">
+      <img id="img2">
+      <img id="img3">
+    </div>
+
+    <p id="modalTexto"></p>
+  </div>
+</div>
+<!-- ===== JAVASCRIPT: BARRA DE PROGRESO DE SCROLL ===== -->
+<script>
+// Actualiza el ancho de la barra de progreso según el scroll de la página.
+document.addEventListener("DOMContentLoaded", function () {
+
+  const botones = document.querySelectorAll(".nav-btn");
+  const secciones = document.querySelectorAll(".section");
+
+  botones.forEach(boton => {
+    boton.addEventListener("click", function () {
+
+      const id = this.getAttribute("data-seccion");
+
+      secciones.forEach(sec => {
+        sec.classList.remove("active");
+      });
+
+      document.getElementById(id).classList.add("active");
+
+    });
+  });
+
+});
+</script>
+<section id="runas" class="section">
+  <h2>Runas Reforjadas</h2>
+
+  <div class="runas-grid">
+
+    <div class="runa-tree" onclick="abrirModalRunas('precision')">
+      <img src="img/runas/precision.png">
+      <p>Precisión</p>
+    </div>
+
+    <div class="runa-tree" onclick="abrirModalRunas('dominacion')">
+      <img src="img/runas/dominacion.png">
+      <p>Dominación</p>
+    </div>
+
+    <div class="runa-tree" onclick="abrirModalRunas('brujeria')">
+      <img src="img/runas/brujeria.png">
+      <p>Brujería</p>
+    </div>
+
+    <div class="runa-tree" onclick="abrirModalRunas('valor')">
+      <img src="img/runas/valor.png">
+      <p>Valor</p>
+    </div>
+
+    <div class="runa-tree" onclick="abrirModalRunas('inspiracion')">
+      <img src="img/runas/inspiracion.png">
+      <p>Inspiración</p>
+    </div>
+
+  </div>
+</section>
+<!-- MODAL RUNAS -->
+<div id="modalRunas" class="modalRunas">
+  <div class="modal-contenido">
+    <span class="cerrar" onclick="cerrarModalRunas()">&times;</span>
+    <h3 id="modalTituloRunas"></h3>
+    <div id="modalBodyRunas" class="modal-body"></div>
+  </div>
+</div>
+
+<!-- ===== JAVASCRIPT: DATOS Y LÓGICA DE RUNAS ===== -->
+<script>
+// Objeto con la información de cada árbol de runas (nombre, imagen, runas hijas).
+// Al hacer clic en un árbol, se abre un modal con todas sus runas.
+const runasData = {
+
+precision: [
+ { img:"img/runas/compas_letal.png",
+   name:"Compás Letal",
+   desc:"Aumenta la velocidad de ataque tras dañar a un campeón."},
+
+ { img:"img/runas/ataque_intensificado.png",
+   name:"Ataque Intensificado",
+   desc:"Golpear repetidamente inflige daño adicional."},
+
+ { img:"img/runas/pies_veloces.png",
+   name:"Pies Veloces",
+   desc:"Atacar otorga curación y velocidad de movimiento."}
+],
+
+dominacion: [
+ { img:"img/runas/electrocutar.png",
+   name:"Electrocutar",
+   desc:"Golpear con 3 ataques distintos inflige daño extra."},
+
+ { img:"img/runas/cosecha_oscura.png",
+   name:"Cosecha Oscura",
+   desc:"Daño adicional a enemigos debilitados."},
+
+ { img:"img/runas/lluvia_cuchillas.png",
+   name:"Lluvia de Cuchillas",
+   desc:"Aumenta mucho la velocidad de ataque inicial."}
+],
+
+brujeria: [
+ { img:"img/runas/aery.png",
+   name:"Invocar a Aery",
+   desc:"Aery daña o protege según el objetivo."},
+
+ { img:"img/runas/cometa_arcano.png",
+   name:"Cometa Arcano",
+   desc:"Las habilidades lanzan un cometa al enemigo."},
+
+ { img:"img/runas/fase_veloz.png",
+   name:"Fase Veloz",
+   desc:"Golpear con habilidades otorga velocidad."}
+],
+
+valor: [
+ { img:"img/runas/garras_inmortal.png",
+   name:"Garras del Inmortal",
+   desc:"Ataques periódicos curan y dañan."},
+
+ { img:"img/runas/guardian.png",
+   name:"Guardián",
+   desc:"Protege a aliados cercanos con escudo."},
+
+ { img:"img/runas/acondicionamiento.png",
+   name:"Acondicionamiento",
+   desc:"Otorga resistencias tras un tiempo."}
+],
+
+inspiracion: [
+ { img:"img/runas/destello_hextech.png",
+   name:"Destello Hextech",
+   desc:"Permite usar un destello especial."},
+
+ { img:"img/runas/primer_golpe.png",
+   name:"Primer Golpe",
+   desc:"Otorga oro y daño adicional."},
+
+ { img:"img/runas/calzado_magico.png",
+   name:"Calzado Mágico",
+   desc:"Recibes botas gratis mejoradas."}
+]
+
+};
+
+function abrirModalRunas(rama){
+
+  const modal = document.getElementById("modalRunas");
+  const titulo = document.getElementById("modalTituloRunas");
+  const body = document.getElementById("modalBodyRunas");
+
+  modal.style.display = "flex";
+
+  titulo.innerText =
+    rama.charAt(0).toUpperCase() + rama.slice(1);
+
+  body.innerHTML = "";
+
+  runasData[rama].forEach(runa => {
+
+    const div = document.createElement("div");
+    div.className = "runa-item";
+
+    div.innerHTML = `
+      <img src="${runa.img}">
+      <p>${runa.name}</p>
+      <div class="tooltipTexto">${runa.desc}</div>
+    `;
+
+    body.appendChild(div);
+
+  });
+}
+
+function cerrarModalRunas(){
+  document.getElementById("modalRunas").style.display = "none";
+}
+// Cerrar modal al hacer clic fuera del cuadro
+document.getElementById("modalRunas").addEventListener("click", function(e) {
+  if (e.target === this) {
+    cerrarModalRunas();
+  }
+});
+</script>
+<!-- ===== JAVASCRIPT: LISTA DE NOMBRES DE ARCHIVOS DE OBJETOS (referencia) ===== -->
+<script>
+// Array auxiliar con los nombres de archivo de los objetos.
+const imagenesObjetos = [
+  "abbysal_mask.png",
+  "archangel_staff.png",
+  "ardent_censer.png",
+  "axiom_arc.png",
+  "banshee_veil.png",
+  "black_cleaver.png",
+  "blackfire_torch.png",
+  "blade_of_the_ruined_king.png",
+  "bloodsong.png",
+  "bloodthirster.png",
+  "chempunk_chainsword.png",
+  "cosmic_drive.png",
+  "cryptbloom.png",
+  "dawncore.png",
+  "death_dance.png",
+  "dream_maker.png",
+  "echoes_of_helia.png",
+  "eclipse.png",
+  "edge_of_night.png",
+  "essence_reaver.png",
+  "experimental_hexplate.png",
+  "force_of_nature.png",
+  "frozen_heart.png",
+  "guardian_angel.png",
+  "guinsoo_rageblade.png",
+  "heartsteel.png",
+  "hextech_rocketbelt.png",
+  "horizon_focus.png",
+  "hubris.png",
+  "hullbreaker.png",
+  "iceborn_gauntlet.png",
+  "immortal_shieldbow.png",
+  "imperial_mandate.png",
+  "infinity_edge.png",
+  "jaxsho.png",
+  "kaenic_rookern.png",
+  "knight_vow.png",
+  "kraken_slayer.png",
+  "liandry_torment.png",
+  "lichbane.png",
+  "locket_of_the_iron.png",
+  "lorddominik.png",
+  "malignance.png",
+  "manamune.png",
+  "maw_of_malmortius.png",
+  "mejai_soulstealer.png",
+  "mercurial_scimitar.png",
+  "mikael_bleesing.png",
+  "moonstone_renewer.png",
+  "morellonomicon.png",
+  "mortal_reminder.png",
+  "nashor_tooth.png",
+  "navori_flickerblade.png",
+  "opportunity.png",
+  "overlord_bloodmail.png",
+  "phamtom_dancer.png",
+  "profane_hydra.png",
+  "rabadon.png",
+  "randuin_omen.png",
+  "rapid_firecannon.png",
+  "ravenous_hydra.png",
+  "redemption.png",
+  "riftmaker.png",
+  "rod_of_ages.png",
+  "runaan_hurricane.png",
+  "rylai_crystal.png",
+  "seraph_embrace.png",
+  "serylda_grudge.png",
+  "shadowflame.png",
+  "shurelya_battlesong.png",
+  "solstice_sleigh.png",
+  "spear_of_shojin.png",
+  "spirit_visage.png",
+  "staff_of_flowing_water.png",
+  "statikk_shiv.png",
+  "sterak_gage.png",
+  "storm_surge.png",
+  "stridebreaker.png",
+  "sunfire_aegis.png",
+  "terminus.png",
+  "the_collector.png",
+  "thornmail.png",
+  "titanic_hydra.png",
+  "trailblazer.png",
+  "trinity_force.png",
+  "umbral_glaive.png",
+  "unending_despair.png",
+  "void_staff.png",
+  "voltaic_cyclosword.png",
+  "warmog_armor.png",
+  "winter_approach.png",
+  "witend.png",
+  "youmuu_ghostblade.png",
+  "yuntal_wildarrows.png",
+  "zakzak_realmspike.png",
+  "zeke_convergence.png",
+  "zhonya_hourglass.png",
+];
+
+</script>
+<!-- ===== MODAL PERSONAJES (ventana emergente con imagen y lore del campeón) ===== -->
+<div id="champModal" class="champ-modal">
+  <div class="champ-modal-content">
+    <span class="champ-close" onclick="closeModal()">✖</span>
+    <img id="modalImg">
+    <h2 id="modalName"></h2>
+    <p id="modalLore"></p>
+  </div>
+</div>
+</div>
+<!-- ===== JAVASCRIPT: CERRAR MODAL DE PERSONAJES AL CLICAR FUERA ===== -->
+<script>
+// Cierra el modal del campeón si el usuario hace clic en el fondo oscuro.
+const champModal = document.getElementById("champModal");
+
+champModal.addEventListener("click", function(e){
+  if(e.target === champModal){
+    closeModal();
+  }
+});
+
+</script>
+<!-- ===== MODAL OBJETOS (ventana emergente con imagen y descripción del objeto) ===== -->
+<div id="modalObjetos" class="modal" style="background:rgba(0,0,0,0.45);backdrop-filter:blur(4px);">
+  <div class="modal-content">
+    <span class="modal-close" id="closeObjetos">&times;</span>
+    <h2 id="modalObjNombre">Nombre del Objeto</h2>
+    <img id="modalObjImg" src="" alt="">
+    <p id="modalObjDesc">Descripción del objeto...</p>
+  </div>
+</div>
+</main>
+
+<!-- ===== JAVASCRIPT: NAVEGACIÓN ENTRE SECCIONES ===== -->
+<script>
+  // Al hacer clic en un botón del nav, oculta todas las secciones
+  // y muestra solo la que corresponde al botón pulsado
+  const navButtons = document.querySelectorAll(".nav-btn");
+  const sections = document.querySelectorAll(".section");
+
+  navButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      const targetId = btn.getAttribute("data-seccion");
+
+      // Ocultar todas las secciones y quitar clases activas
+      sections.forEach(s => s.classList.remove("active"));
+      navButtons.forEach(b => b.classList.remove("active"));
+
+      // Mostrar la sección seleccionada
+      const targetSection = document.getElementById(targetId);
+      if (targetSection) {
+        targetSection.classList.add("active");
+        btn.classList.add("active");
+      }
+    });
+  });
+
+  // ==========================================
+  // DATOS Y LÓGICA DE OBJETOS
+  // Array con nombre, ruta de imagen y descripción de cada objeto
+  // ==========================================
+  const datosObjetos = [
+
+  {
+    nombre: "Abyssal Mask",
+    img: "img/objetos/abbysal_mask.png",
+    desc: "Reduce la resistencia mágica de los enemigos cercanos y otorga vida."
+  },
+  {
+    nombre: "Archangel's Staff",
+    img: "img/objetos/archangel_staff.png",
+    desc: "Otorga maná y poder de habilidad basado en tu maná máximo."
+  },
+  {
+    nombre: "Ardent Censer",
+    img: "img/objetos/ardent_censer.png",
+    desc: "Fortalece a los aliados que curas o proteges con velocidad de ataque."
+  },
+  {
+    nombre: "Axiom Arc",
+    img: "img/objetos/axiom_arc.png",
+    desc: "Reduce el enfriamiento de tu habilidad definitiva al participar en muertes."
+  },
+  {
+    nombre: "Banshee's Veil",
+    img: "img/objetos/banshee_veil.png",
+    desc: "Otorga un escudo de hechizos que bloquea la siguiente habilidad enemiga."
+  },
+  {
+    nombre: "Black Cleaver",
+    img: "img/objetos/black_cleaver.png",
+    desc: "Reduce la armadura enemiga al infligir daño físico de forma acumulativa."
+  },
+  {
+    nombre: "Blackfire Torch",
+    img: "img/objetos/blackfire_torch.png",
+    desc: "Quema a los enemigos con daño mágico y otorga regeneración de maná."
+  },
+  {
+    nombre: "Blade of the Ruined King",
+    img: "img/objetos/blade_of_the_ruined_king.png",
+    desc: "Inflige daño basado en la vida del objetivo y roba velocidad de movimiento."
+  },
+  {
+    nombre: "Bloodsong",
+    img: "img/objetos/bloodsong.png",
+    desc: "Potencia el siguiente ataque tras usar una habilidad, ideal para soportes de daño."
+  },
+  {
+    nombre: "Bloodthirster",
+    img: "img/objetos/bloodthirster.png",
+    desc: "Otorga un gran robo de vida y un escudo cuando tienes la vida al máximo."
+  },
+  {
+    nombre: "Chempunk Chainsword",
+    img: "img/objetos/chempunk_chainsword.png",
+    desc: "Aplica Heridas Graves para reducir drásticamente las curaciones enemigas."
+  },
+  {
+    nombre: "Cosmic Drive",
+    img: "img/objetos/cosmic_drive.png",
+    desc: "Otorga velocidad de movimiento y mucha aceleración de habilidad tras combatir."
+  },
+  {
+    nombre: "Cryptbloom",
+    img: "img/objetos/cryptbloom.png",
+    desc: "Penetración de magia que libera una explosión curativa para aliados al matar."
+  },
+  {
+    nombre: "Dawncore",
+    img: "img/objetos/dawncore.png",
+    desc: "Aumenta el poder de curación y escudo según la regeneración de maná."
+  },
+  {
+    nombre: "Death's Dance",
+    img: "img/objetos/death_dance.png",
+    desc: "Convierte el daño instantáneo en sangrado, dándote tiempo para recuperarte."
+  },
+  {
+    nombre: "Dream Maker",
+    img: "img/objetos/dream_maker.png",
+    desc: "Objeto de soporte que reduce el daño recibido por el aliado al que proteges."
+  },
+  {
+    nombre: "Echoes of Helia",
+    img: "img/objetos/echoes_of_helia.png",
+    desc: "Cura aliados y daña enemigos cercanos al usar habilidades de utilidad."
+  },
+  {
+    nombre: "Eclipse",
+    img: "img/objetos/eclipse.png",
+    desc: "Otorga un escudo tras golpear a un campeón con dos ataques o habilidades."
+  },
+  {
+    nombre: "Edge of Night",
+    img: "img/objetos/edge_of_night.png",
+    desc: "Otorga letalidad y un escudo de hechizos para asesinos."
+  },
+  {
+    nombre: "Essence Reaver",
+    img: "img/objetos/essence_reaver.png",
+    desc: "Los ataques básicos tras usar habilidades recuperan maná."
+  },
+  {
+    nombre: "Experimental Hexplate",
+    img: "img/objetos/experimental_hexplate.png",
+    desc: "Otorga velocidad de ataque y movimiento tras usar la habilidad definitiva."
+  },
+  {
+    nombre: "Force of Nature",
+    img: "img/objetos/force_of_nature.png",
+    desc: "Gran resistencia mágica y velocidad frente a composiciones de magos."
+  },
+  {
+    nombre: "Frozen Heart",
+    img: "img/objetos/frozen_heart.png",
+    desc: "Reduce la velocidad de ataque de todos los enemigos cercanos."
+  },
+  {
+    nombre: "Guardian Angel",
+    img: "img/objetos/guardian_angel.png",
+    desc: "Te revive tras recibir daño letal con un porcentaje de vida y maná."
+  },
+  {
+    nombre: "Guinsoo's Rageblade",
+    img: "img/objetos/guinsoo_rageblade.png",
+    desc: "Transforma el crítico en daño al impacto y golpea doble periódicamente."
+  },
+  {
+    nombre: "Heartsteel",
+    img: "img/objetos/heartsteel.png",
+    desc: "Permite acumular vida máxima de forma permanente al golpear campeones."
+  },
+  {
+    nombre: "Hextech Rocketbelt",
+    img: "img/objetos/hextech_rocketbelt.png",
+    desc: "Activa un pequeño desplazamiento que lanza cohetes dañinos."
+  },
+  {
+    nombre: "Horizon Focus",
+    img: "img/objetos/horizon_focus.png",
+    desc: "Revela y aumenta el daño contra enemigos golpeados a larga distancia."
+  },
+  {
+    nombre: "Hubris",
+    img: "img/objetos/hubris.png",
+    desc: "Otorga daño de ataque adicional temporal tras obtener un asesinato."
+  },
+  {
+    nombre: "Hullbreaker",
+    img: "img/objetos/hullbreaker.png",
+    desc: "Potencia el daño a torres y mejora a los súbditos cercanos."
+  },
+  {
+    nombre: "Iceborn Gauntlet",
+    img: "img/objetos/iceborn_gauntlet.png",
+    desc: "Crea una zona de hielo que ralentiza a los enemigos tras usar habilidades."
+  },
+  {
+    nombre: "Immortal Shieldbow",
+    img: "img/objetos/immortal_shieldbow.png",
+    desc: "Otorga un escudo protector cuando tu vida baja de un umbral crítico."
+  },
+  {
+    nombre: "Imperial Mandate",
+    img: "img/objetos/imperial_mandate.png",
+    desc: "Marca a enemigos ralentizados para que tus aliados les inflijan daño extra."
+  },
+  {
+    nombre: "Infinity Edge",
+    img: "img/objetos/infinity_edge.png",
+    desc: "Aumenta drásticamente el daño que infligen tus ataques críticos."
+  },
+  {
+    nombre: "Jak'Sho, The Protean",
+    img: "img/objetos/jaxsho.png",
+    desc: "Aumenta tus resistencias totales mientras estás en combate."
+  },
+  {
+    nombre: "Kaenic Rookern",
+    img: "img/objetos/kaenic_rookern.png",
+    desc: "Otorga un gran escudo contra daño mágico tras estar fuera de combate."
+  },
+  {
+    nombre: "Knight's Vow",
+    img: "img/objetos/knight_vow.png",
+    desc: "Te vincula a un aliado para absorber parte del daño que este recibe."
+  },
+  {
+    nombre: "Kraken Slayer",
+    img: "img/objetos/kraken_slayer.png",
+    desc: "Cada tercer ataque básico inflige daño físico adicional masivo."
+  },
+  {
+    nombre: "Liandry's Torment",
+    img: "img/objetos/liandry_torment.png",
+    desc: "Quema a los enemigos por un porcentaje de su vida máxima con tus habilidades."
+  },
+  {
+    nombre: "Lich Bane",
+    img: "img/objetos/lichbane.png",
+    desc: "Potencia tu siguiente ataque básico con gran daño mágico tras usar una habilidad."
+  },
+  {
+    nombre: "Locket of the Iron Solari",
+    img: "img/objetos/locket_of_the_iron.png",
+    desc: "Activa un escudo para todos los aliados cercanos para mitigar daño en área."
+  },
+  {
+    nombre: "Lord Dominik's Regards",
+    img: "img/objetos/lorddominik.png",
+    desc: "Penetración de armadura esencial contra enemigos con mucha vida."
+  },
+  {
+    nombre: "Malignance",
+    img: "img/objetos/malignance.png",
+    desc: "Reduce el enfriamiento de la definitiva y crea zonas de daño bajo el enemigo."
+  },
+  {
+    nombre: "Manamune",
+    img: "img/objetos/manamune.png",
+    desc: "Convierte tu maná máximo en daño de ataque. Se transforma en Muramana."
+  },
+  {
+    nombre: "Maw of Malmortius",
+    img: "img/objetos/maw_of_malmortius.png",
+    desc: "Otorga un escudo de daño mágico cuando tu vida baja demasiado."
+  },
+  {
+    nombre: "Mejai's Soulstealer",
+    img: "img/objetos/mejai_soulstealer.png",
+    desc: "Objeto de alto riesgo que otorga AP por cada asesinato, pero lo pierde al morir."
+  },
+  {
+    nombre: "Mercurial Scimitar",
+    img: "img/objetos/mercurial_scimitar.png",
+    desc: "Elimina instantáneamente todos los efectos de control de masas."
+  },
+  {
+    nombre: "Mikael's Blessing",
+    img: "img/objetos/mikael_bleesing.png",
+    desc: "Elimina el control de masas de un aliado y le otorga una pequeña curación."
+  },
+  {
+    nombre: "Moonstone Renewer",
+    img: "img/objetos/moonstone_renewer.png",
+    desc: "Tus curaciones y escudos rebotan hacia otros aliados cercanos."
+  },
+  {
+    nombre: "Morellonomicon",
+    img: "img/objetos/morellonomicon.png",
+    desc: "Aplica Heridas Graves mediante daño mágico para anular curaciones."
+  },
+  {
+    nombre: "Mortal Reminder",
+    img: "img/objetos/mortal_reminder.png",
+    desc: "Proporciona penetración de armadura y aplica Heridas Graves con ataques físicos."
+  },
+  {
+    nombre: "Nashor's Tooth",
+    img: "img/objetos/nashor_tooth.png",
+    desc: "Otorga gran velocidad de ataque y daño mágico adicional en cada golpe."
+  },
+  {
+    nombre: "Navori Flickerblade",
+    img: "img/objetos/navori_flickerblade.png",
+    desc: "Los ataques críticos reducen el enfriamiento de tus habilidades básicas."
+  },
+  {
+    nombre: "Opportunity",
+    img: "img/objetos/opportunity.png",
+    desc: "Otorga letalidad y una ráfaga de velocidad tras participar en una muerte."
+  },
+  {
+    nombre: "Overlord's Bloodmail",
+    img: "img/objetos/overlord_bloodmail.png",
+    desc: "Aumenta el daño de ataque según la cantidad de vida adicional que tengas."
+  },
+  {
+    nombre: "Phantom Dancer",
+    img: "img/objetos/phamtom_dancer.png",
+    desc: "Otorga gran velocidad de ataque y te permite atravesar unidades al atacar."
+  },
+  {
+    nombre: "Profane Hydra",
+    img: "img/objetos/profane_hydra.png",
+    desc: "Inflige daño en área y tiene una activa potente contra enemigos con poca vida."
+  },
+  {
+    nombre: "Rabadon's Deathcap",
+    img: "img/objetos/rabadon.png",
+    desc: "Aumenta el poder de habilidad total de forma masiva."
+  },
+  {
+    nombre: "Randuin's Omen",
+    img: "img/objetos/randuin_omen.png",
+    desc: "Reduce el daño de los ataques críticos recibidos y ralentiza enemigos."
+  },
+  {
+    nombre: "Rapid Firecannon",
+    img: "img/objetos/rapid_firecannon.png",
+    desc: "Carga un ataque con rango adicional y daño mágico extra."
+  },
+  {
+    nombre: "Ravenous Hydra",
+    img: "img/objetos/ravenous_hydra.png",
+    desc: "Otorga robo de vida y daño en área a tus ataques y habilidades."
+  },
+  {
+    nombre: "Redemption",
+    img: "img/objetos/redemption.png",
+    desc: "Invoca un rayo de luz que cura aliados y daña enemigos tras un retardo."
+  },
+  {
+    nombre: "Riftmaker",
+    img: "img/objetos/riftmaker.png",
+    desc: "Aumenta tu daño mientras estás en combate y otorga omnisucción."
+  },
+  {
+    nombre: "Rod of Ages",
+    img: "img/objetos/rod_of_ages.png",
+    desc: "Otorga vida, maná y AP que aumenta cada minuto durante 10 minutos."
+  },
+  {
+    nombre: "Runaan's Hurricane",
+    img: "img/objetos/runaan_hurricane.png",
+    desc: "Tus ataques básicos disparan proyectiles a dos objetivos adicionales."
+  },
+  {
+    nombre: "Rylai's Crystal Scepter",
+    img: "img/objetos/rylai_crystal.png",
+    desc: "Hace que todas tus habilidades dañinas ralenticen a los enemigos."
+  },
+  {
+    nombre: "Seraph's Embrace",
+    img: "img/objetos/seraph_embrace.png",
+    desc: "Otorga un escudo de maná masivo cuando tu vida cae peligrosamente."
+  },
+  {
+    nombre: "Serylda's Grudge",
+    img: "img/objetos/serylda_grudge.png",
+    desc: "Otorga letalidad y ralentiza a enemigos heridos por tus habilidades."
+  },
+  {
+    nombre: "Shadowflame",
+    img: "img/objetos/shadowflame.png",
+    desc: "Inflige daño crítico mágico a enemigos con poca vida o recientemente escudados."
+  },
+  {
+    nombre: "Shurelya's Battlesong",
+    img: "img/objetos/shurelya_battlesong.png",
+    desc: "Activa una ráfaga de velocidad de movimiento para ti y tus aliados."
+  },
+  {
+    nombre: "Solstice Sleigh",
+    img: "img/objetos/solstice_sleigh.png",
+    desc: "Ralentizar enemigos otorga vida y velocidad a un aliado cercano."
+  },
+  {
+    nombre: "Spear of Shojin",
+    img: "img/objetos/spear_of_shojin.png",
+    desc: "Aumenta el daño y la aceleración de tus habilidades básicas."
+  },
+  {
+    nombre: "Spirit Visage",
+    img: "img/objetos/spirit_visage.png",
+    desc: "Potencia todas las curaciones y escudos recibidos sobre ti mismo."
+  },
+  {
+    nombre: "Staff of Flowing Water",
+    img: "img/objetos/staff_of_flowing_water.png",
+    desc: "Al curar a un aliado, ambos ganan poder de habilidad y aceleración."
+  },
+  {
+    nombre: "Statikk Shiv",
+    img: "img/objetos/statikk_shiv.png",
+    desc: "Lanza rayos encadenados al matar unidades, ideal para limpiar oleadas."
+  },
+  {
+    nombre: "Sterak's Gage",
+    img: "img/objetos/sterak_gage.png",
+    desc: "Otorga un gran escudo de vida cuando recibes mucho daño en poco tiempo."
+  },
+  {
+    nombre: "Stormsurge",
+    img: "img/objetos/storm_surge.png",
+    desc: "Lanza una explosión eléctrica tras infligir gran daño a un campeón."
+  },
+  {
+    nombre: "Stridebreaker",
+    img: "img/objetos/stridebreaker.png",
+    desc: "Permite ralentizar en área a los enemigos cercanos al activarlo."
+  },
+  {
+    nombre: "Sunfire Aegis",
+    img: "img/objetos/sunfire_aegis.png",
+    desc: "Quema constantemente a los enemigos que se encuentren pegados a ti."
+  },
+  {
+    nombre: "Terminus",
+    img: "img/objetos/terminus.png",
+    desc: "Aumenta resistencias y penetración alternando entre luz y oscuridad."
+  },
+  {
+    nombre: "The Collector",
+    img: "img/objetos/the_collector.png",
+    desc: "Ejecuta instantáneamente a enemigos que tengan menos del 5% de vida."
+  },
+  {
+    nombre: "Thornmail",
+    img: "img/objetos/thornmail.png",
+    desc: "Devuelve daño mágico a los atacantes y reduce sus curaciones."
+  },
+  {
+    nombre: "Titanic Hydra",
+    img: "img/objetos/titanic_hydra.png",
+    desc: "Convierte parte de tu vida máxima en daño físico en área."
+  },
+  {
+    nombre: "Trailblazer",
+    img: "img/objetos/trailblazer.png",
+    desc: "Deja un rastro de velocidad para tus aliados mientras te mueves."
+  },
+  {
+    nombre: "Trinity Force",
+    img: "img/objetos/trinity_force.png",
+    desc: "El objeto más equilibrado: otorga vida, daño, velocidad y daño por brillo."
+  },
+  {
+    nombre: "Umbral Glaive",
+    img: "img/objetos/umbral_glaive.png",
+    desc: "Revela y te permite destruir guardianes de visión enemigos de un golpe."
+  },
+  {
+    nombre: "Unending Despair",
+    img: "img/objetos/unending_despair.png",
+    desc: "Cura al portador periódicamente mientras está cerca de enemigos."
+  },
+  {
+    nombre: "Void Staff",
+    img: "img/objetos/void_staff.png",
+    desc: "Proporciona un 40% de penetración de magia, letal contra tanques."
+  },
+  {
+    nombre: "Voltaic Cyclosword",
+    img: "img/objetos/voltaic_cyclosword.png",
+    desc: "Los ataques energizados ralentizan y aplican daño extra de letalidad."
+  },
+  {
+    nombre: "Warmog's Armor",
+    img: "img/objetos/warmog_armor.png",
+    desc: "Otorga una regeneración de vida extrema cuando estás fuera de combate."
+  },
+  {
+    nombre: "Winter's Approach",
+    img: "img/objetos/winter_approach.png",
+    desc: "Se transforma en Gran Invierno, otorgando escudos al ralentizar enemigos."
+  },
+  {
+    nombre: "Wit's End",
+    img: "img/objetos/witend.png",
+    desc: "Otorga resistencia mágica, velocidad de ataque y daño mágico por golpe."
+  },
+  {
+    nombre: "Youmuu's Ghostblade",
+    img: "img/objetos/youmuu_ghostblade.png",
+    desc: "Otorga una gran velocidad de movimiento activa para cazar enemigos."
+  },
+  {
+    nombre: "Yun Tal Wildarrows",
+    img: "img/objetos/yuntal_wildarrows.png",
+    desc: "Tus ataques críticos infligen daño por sangrado adicional."
+  },
+  {
+    nombre: "Zak'Zak's Realmspike",
+    img: "img/objetos/zakzak_realmspike.png",
+    desc: "Las habilidades contra campeones lanzan una explosión de vida máxima."
+  },
+  {
+    nombre: "Zeke's Convergence",
+    img: "img/objetos/zeke_convergence.png",
+    desc: "Al usar la definitiva, creas una tormenta que ralentiza y daña enemigos."
+  },
+  {
+    nombre: "Zhonya's Hourglass",
+    img: "img/objetos/zhonya_hourglass.png",
+    desc: "Te vuelve invulnerable durante 2.5 segundos, pero no puedes moverte."
+  }
+];
+// Genera las tarjetas de objetos en el grid y gestiona el modal al hacer clic
+const inputBuscador = document.getElementById("searchObjetos");
+const gridObjetos = document.getElementById("objetosGrid");
+const modalObj = document.getElementById("modalObjetos");
+
+function renderizarObjetos(lista) {
+  gridObjetos.innerHTML = "";
+
+  lista.forEach(obj => {
+    const card = document.createElement("div");
+    card.className = "obj-card";
+    // Tooltip con la descripción: aparece al pasar el ratón, sin necesidad de clic
+    card.innerHTML = `
+      <img src="${obj.img}" alt="${obj.nombre}">
+      <div class="obj-name">${obj.nombre}</div>
+      <div class="obj-tooltip">${obj.desc}</div>
+    `;
+    gridObjetos.appendChild(card);
+  });
+}
+
+if (inputBuscador) {
+  inputBuscador.addEventListener("input", (e) => {
+    const texto = e.target.value.toLowerCase();
+    const filtrados = datosObjetos.filter(item =>
+      item.nombre.toLowerCase().includes(texto)
+    );
+    renderizarObjetos(filtrados);
+  });
+}
+
+// Renderizar todos los objetos al cargar
+renderizarObjetos(datosObjetos);
+
+</script>
+<!-- ===== LIGHTBOX (visor de imágenes a pantalla completa para las regiones) ===== -->
+<div id="lightbox" class="lightbox">
+  <span class="lightbox-close" id="closeLightbox">&times;</span>
+  <span class="lightbox-prev" id="prevImage">&#10094;</span>
+  <img class="lightbox-content" id="imgGrande" src="">
+  <span class="lightbox-next" id="nextImage">&#10095;</span>
+</div>
+<!-- ===== JAVASCRIPT: LIGHTBOX DE REGIONES ===== -->
+<script>
+  // Permite ampliar las imágenes de las regiones a pantalla completa
+  // y navegar entre ellas con flechas o teclas del teclado
+const lightbox = document.getElementById("lightbox");
+const imgGrande = document.getElementById("imgGrande");
+let imagenesRegion = []; // Lista de fotos de la región actual
+let indiceActual = 0;
+
+// Configurar clicks en todas las fotos de regiones
+// Buscamos dentro de todos los modales de historia
+document.querySelectorAll(".modal-content img").forEach(img => {
+  img.style.cursor = "zoom-in"; // Cambia el cursor para indicar que se puede ampliar
+
+  img.addEventListener("click", function() {
+    // 1. Obtener todas las imágenes que están en este mismo modal
+    const parentModal = this.closest(".modal-content");
+    imagenesRegion = Array.from(parentModal.querySelectorAll("img")).map(i => i.src);
+
+    // 2. Encontrar el índice de la imagen clickeada
+    indiceActual = imagenesRegion.indexOf(this.src);
+
+    // 3. Mostrar el lightbox
+    actualizarImagenLightbox();
+    lightbox.style.display = "flex";
+  });
+});
+
+function actualizarImagenLightbox() {
+  imgGrande.src = imagenesRegion[indiceActual];
+}
+
+// Botones de navegación
+document.getElementById("nextImage").onclick = () => {
+  indiceActual = (indiceActual + 1) % imagenesRegion.length;
+  actualizarImagenLightbox();
+};
+
+document.getElementById("prevImage").onclick = () => {
+  indiceActual = (indiceActual - 1 + imagenesRegion.length) % imagenesRegion.length;
+  actualizarImagenLightbox();
+};
+
+// Cerrar Lightbox
+document.getElementById("closeLightbox").onclick = () => {
+  lightbox.style.display = "none";
+};
+
+// Cerrar con la tecla Escape
+window.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") lightbox.style.display = "none";
+  if (e.key === "ArrowRight" && lightbox.style.display === "flex") document.getElementById("nextImage").click();
+  if (e.key === "ArrowLeft" && lightbox.style.display === "flex") document.getElementById("prevImage").click();
+});
+
+</script>
+<!-- ===== JAVASCRIPT: LOGO → VOLVER A INICIO ===== -->
+<script>
+  // Al hacer clic en el logo, navega a la sección Historia y sube al inicio
+  document.getElementById("logoInicio").addEventListener("click", () => {
+  // Buscamos el botón de navegación que activa la sección "historia"
+  const btnHistoria = document.querySelector('[data-seccion="historia"]');
+
+  if (btnHistoria) {
+    // 2. Simulamos un clic en ese botón para que tu lógica de pestañas cambie la vista
+    btnHistoria.click();
+
+    // 3. Opcional: Desplazar la página hacia arriba por si el usuario está abajo
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } else {
+    // Si no encuentra el botón, simplemente recarga la página para ir al inicio
+    location.reload();
+  }
+});
+</script>
+</body>
+</html>
